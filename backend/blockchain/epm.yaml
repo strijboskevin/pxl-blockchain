@@ -1,0 +1,32 @@
+jobs:
+
+- name: setName
+  job:
+    set:
+      val: "kevin Strijbos"
+
+- name: deployContract
+  job:
+    deploy:
+      contract: token.sol
+      wait: true
+
+- name: setContract
+  job:
+    call:
+      destination: $deployContract
+      data: set $setName 10
+      wait: true
+
+- name: queryContract
+  job:
+    query-contract:
+      destination: $deployContract
+      data: get $setName
+
+- name: assertStorage
+  job:
+    assert:
+      key: $queryContract
+      relation: eq
+      val: 10
