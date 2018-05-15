@@ -16,8 +16,11 @@ var statuses = [];
 var times = [];
 var created = [];
 var performed = [];
-var multiples = [];
+var maxima = [];
 var requests = [];
+var deadlines = [];
+var handicaps = [];
+var hashes = [];
 var assignments = [];
 
 var contract;
@@ -99,6 +102,14 @@ function getStatuses() {
     }
 }
 
+function getHashes() {
+    var index;
+
+    for (index=0; index < length; index++) {
+        contract.getHash(index, getHashCb);
+    }
+}
+
 function getTimes() {
     var index;
 
@@ -123,11 +134,27 @@ function getPerformed() {
     }
 }
 
-function getMultiples() {
+function getDeadlines() {
+    var index;
+
+    for (index=0; index < length ;index++) {
+        contract.getDeadline(index, getDeadlineCb);
+    }
+}
+
+function getHandicaps() {
+    var index;
+
+    for (index=0; index < length ;index++) {
+        contract.getHandicap(index, getHandicapCb);
+    }
+}
+
+function getMaxima() {
     var index;
 
     for (index = 0; index < length ;index++) {
-        contract.getMultiple(index, getMultipleCb);
+        contract.getMaximum(index, getMaximumCb);
     }
 }
 
@@ -153,6 +180,14 @@ function getNameCb(error, name) {
         names.push(name);
     } else {
         console.log("Something went wrong while loading the names, see stacktrace.\n" + error.stack);
+    }
+}
+
+function getHashCb(error, hash) {
+    if (!error) {
+        hashes.push(hash);
+    } else {
+        console.log("Somthing went wrong while loading the hashes, see stacktrace.\n" + error.stack);
     }
 }
 
@@ -198,7 +233,7 @@ function getStatusCb(error, status) {
 
 function getCreatedCb(error, c) {
     if (!error) {
-        created.push(c.toString(10));
+        created.push(c);
     } else {
         console.log("Something went wrong while loading the created timestamps, see stacktrace.\n" + error.stack);
     }
@@ -206,17 +241,34 @@ function getCreatedCb(error, c) {
 
 function getPerformedCb(error, p) {
     if (!error) {
-        performed.push(p.toString(10));
+        performed.push(p);
     } else {
         console.log("Something went wrong while loading the performed timestamps, see stacktrace.\n" + error.stack);
     }
 }
 
-function getMultipleCb(error, multiple) {
+function getDeadlineCb(error, d) {
     if (!error) {
-        multiples.push(multiple);
+        deadlines.push(d);
     } else {
-        console.log("Something went wrong while loading the multiple booleans, see stacktrace.\n" + error.stack);
+        console.log("Something went wrong while loading the deadline timestamps, see stacktrace.\n" + error.stack);
+    }
+}
+
+function getHandicapCb(error, h) {
+    if (!error) {
+        console.log(h.toString(10));
+        handicaps.push(h.toString(10));
+    } else {
+        console.log("Something went wrong while loading the handicaps, see stacktrace.\n" + error.stack);
+    }
+}
+
+function getMaximumCb(error, maximum) {
+    if (!error) {
+        maxima.push(maximum.toString(10));
+    } else {
+        console.log("Something went wrong while loading the maxima numbers, see stacktrace.\n" + error.stack);
     }
 }
 
@@ -246,13 +298,16 @@ function getTimeCb(error, time) {
                 time = times[x];
                 creat = created[x];
                 perf = performed[x];
-                multiple = multiples[x];
+                maximum = maxima[x];
                 request = requests[x];
+                deadline = deadlines[x];
+                handicap = handicaps[x];
+                hash = hashes[x];
                 assignments.push({
                     name: name, description: description, lecturer: lecturer,
                     assignee: assignee, domain: domain, status: status, time: time, 
-                    created: creat, performed: perf, multiple: multiple,
-                    request: request
+                    created: creat, performed: perf, deadline: deadline, handicap: handicap,
+                    maximum: maximum, request: request, hash: hash
                 });
             }
 
@@ -274,7 +329,10 @@ function getAll() {
     getStatuses();
     getCreated();
     getPerformed();
-    getMultiples();
+    getMaxima();
     getRequests();
+    getDeadlines();
+    getHandicaps();
+    getHashes();
     getTimes();
 }

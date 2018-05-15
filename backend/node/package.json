@@ -5,6 +5,7 @@
     "@monax/legacy-contracts": "0.16.8",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "prompt": "*"
+    "prompt": "*",
+    "cors": "2.8.4"
   }
 }

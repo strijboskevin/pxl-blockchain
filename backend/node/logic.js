@@ -1,39 +1,40 @@
-var http = require('http');
 var genesis = require('./load.js');
+var hash = require('hash.js');
+var http = require('https');
 
-var part = 11;
+var part = 13;
 
 var assignments = [];
 var assignmentsByLecturer = {};
 var assignmentsByTime = {};
 var assignmentsByStatus = {};
 var assignmentsByDomain = {};
-var assignmentsByMultiple = {};
+var assignmentsByAssignee = {};
 
 var domains = ["Innovatie", "Student engagement", "Seminaries", "Internationalisering"];
 
 var balancesCb;
 
 module.exports = {
-    login: function (request) {
-        var auth = request.headers['authorization'];
-        console.log('Authorization header: ' + auth);
+    examine: function (request, cb) {
+        var options = {
+            host: 'graph.microsoft.com',
+            path: '/v1.0/me',
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': request.get('Authorization')
+            }
+        };
 
-        if (!auth) {
-            return false;
-        } else {
-            var tmp = auth.split(' ');
-
-            var buf = new Buffer(tmp[1], 'base64');
-            var plain_auth = buf.toString();
-            console.log("Decoded Authorization: " + plain_auth);
-
-            var creds = plain_auth.split(':');
-            var username = creds[0];
-            var password = creds[1];
-
-            return username == 'pxl' && password == 'pxl';
-        }
+        var req = http.get(options, res => {
+            res.on('data', chunk => {
+                chunk = JSON.parse(chunk);
+                mail = chunk['mail'];
+                jobtitle = chunk["jobTitle"];
+                cb(mail, jobtitle);
+            })
+          });
     },
 
     load: function () {
@@ -71,14 +72,6 @@ module.exports = {
 
 
 
-    getMultiple: function (multiple) {
-        if (multiple == "yes" || multiple == "no") {
-            return assignmentsByMultiple[multiple];
-        } else {
-            throw new Error("No valid multiple value set.");
-        }
-    },
-
     getDomains: function () {
         return domains;
     },
@@ -106,24 +99,41 @@ module.exports = {
     },
 
     getAssignmentsByTime: function (time) {
-        return assignmentsByTime[time];
+        if (assignmentsByTime[time] != undefined) {
+            return assignmentsByTime[time];
+        } else {
+            return [];
+        }
     },
 
     getAssignmentsByDomain: function (domain) {
         if (domains.includes(domain)) {
-            return assignmentsByDomain[domain];
+            if (assignmentsByDomain[domain] != undefined) {
+                return assignmentsByDomain[domain];
+            }
+            else {
+                return [];
+            }
         } else {
             throw new Error("Domain not found.");
         }
     },
 
     getAssignmentsByLecturer: function (lecturer) {
-        return assignmentsByLecturer[lecturer];
+        if (assignmentsByLecturer[lecturer] != undefined) {
+            return assignmentsByLecturer[lecturer];
+        } else {
+            return [];
+        }
     },
 
     getAssignmentsByStatus: function (status) {
         if (status >= 0 && status <= 2) {
-            return assignmentsByStatus[status];
+            if (assignmentsByStatus[status] != unefined) {
+                return assignmentsByStatus[status];
+            } else {
+                return [];
+            }
         } else {
             throw new Error("Status not valid.");
         }
@@ -189,7 +199,7 @@ module.exports = {
         var assignments = assignmentsByAssignee[assignee];
         var toReturn = [];
 
-        if (assignments != null && domains.includes(domain)) {
+        if (assignments != undefined && domains.includes(domain)) {
             assignments.forEach(function (value) {
                 if (value.domain == domain) {
                     toReturn.push(value);
@@ -202,11 +212,11 @@ module.exports = {
         }
     },
 
-    getAssignmentByAssigneeByStatus: function (assignee, status) {
-        var assignments = assignmentsByassignee[assignee];
+    getAssignmentsByAssigneeByStatus: function (assignee, status) {
+        var assignments = assignmentsByAssignee[assignee];
         var toReturn = [];
 
-        if (assignments != null && status >= 0 && status <= 2) {
+        if (assignments != undefined && status >= 0 && status <= 2) {
             assignments.forEach(function (value) {
                 if (value.status == status) {
                     toReturn.push(value);
@@ -215,6 +225,10 @@ module.exports = {
 
             return toReturn;
         } else {
+            if (assignments == undefined) {
+                return [];
+            }
+
             throw new Error("Status not valid or assignments not loaded.");
         }
     },
@@ -223,7 +237,7 @@ module.exports = {
         var assignments = assignmentsByassignee[assignee];
         var toReturn = [];
 
-        if (assignments != null && status >= 0 && status <= 2 && domain.includes(domain)) {
+        if (assignments != undefined && status >= 0 && status <= 2 && domain.includes(domain)) {
             assignments.forEach(function (value) {
                 if (value.status == status && value.domain == domain) {
                     toReturn.push(value);
@@ -240,7 +254,7 @@ module.exports = {
         var assignments = assignmentsByLecturer[lecturer];
         var toReturn = [];
 
-        if (assignments != null && domain.includes(domain)) {
+        if (assignments != undefined && domain.includes(domain)) {
             assignments.forEach(function (value) {
                 if (value.domain == domain) {
                     toReturn.push(value);
@@ -257,7 +271,7 @@ module.exports = {
         var assignments = assignmentsByLecturer[lecturer];
         var toReturn = [];
 
-        if (assignments != null && status >= 0 && status <= 2) {
+        if (assignments != undefined && status >= 0 && status <= 2) {
             assignments.forEach(function (value) {
                 if (value.status == status) {
                     toReturn.push(value);
@@ -274,7 +288,7 @@ module.exports = {
         var assignments = assignmentsByLecturer[lecturer];
         var toReturn = [];
 
-        if (assignments != null && status >= 0 && status <= 2 && domain.includes(domain)) {
+        if (assignments != undefined && status >= 0 && status <= 2 && domain.includes(domain)) {
             assignments.forEach(function (value) {
                 if (value.status == status && value.domain == domain) {
                     toReturn.push(value);
@@ -301,16 +315,21 @@ module.exports = {
     },
 
     getAssignmentsByAssignee: function (assignee) {
-        var toReturn = [];
-        var x;
+        if (assignmentsByAssignee[assignee] !== undefined) {
+            return assignmentsByAssignee[assignee];
+        } else {
+            return [];
+        }
+    },
 
+    getAssignmentByName: function (name) {
         for (x = 0; x < assignments.length; x++) {
-            if (assignments[x].assignee.indexOf(assignee) > -1) {
-                toReturn.push(assignments[x]);
+            if (assignments[x].name.trim() === name.trim()) {
+                return assignments[x];
             }
         }
 
-        return toReturn;
+        return undefined;
     },
 
     getOpenAssignments: function (user) {
@@ -318,12 +337,8 @@ module.exports = {
         var x;
 
         for (x = 0; x < assignments.length; x++) {
-            if (assignments[x].status == 0) {
-                if (assignments[x].request = '') {
-                    toReturn.push(assignments[x]);
-                } else if (assignments[x].multiple == 'yes' && assignments[x].request.indexOf(user) == -1) {
-                    toReturn.push(assignments[x]);
-                }
+            if (assignments[x].status == 0 && assignments[x].request.indexOf(user) === -1 && assignments[x].assignee.indexOf(user) === -1) {
+                toReturn.push(assignments[x]);
             }
         }
 
@@ -365,54 +380,67 @@ module.exports = {
     },
 
     addAssignment: function (assignment) {
-        if (domains.includes(assignment.domain) && getIndex(assignments, assignment.name) == -1 && (assignment.multiple == "yes" || assignment.multiple == "no")) {
+        if (domains.includes(assignment._domain) && getIndex(assignments, assignment._name) == -1) {
+            var nAssignment = {};
+
+            var newHash = hash.sha256().update(assignment._name + "_" + assignment._description + "_" + assignment._lecturer + "_" + assignment._time + "_" + assignment._deadline).digest("hex");
+
             genesis.set();
-            genesis.getContract().setName(assignment.name, pushCb);
-            genesis.getContract().setDescription(assignment.description, pushCb);
-            genesis.getContract().setLecturer(assignment.lecturer, pushCb);
+            genesis.getContract().setName(assignment._name, pushCb);
+            genesis.getContract().setDescription(assignment._description, pushCb);
+            genesis.getContract().setLecturer(assignment._lecturer, pushCb);
             genesis.getContract().setAssignee('', pushCb);
-            genesis.getContract().setDomain(assignment.domain, pushCb);
+            genesis.getContract().setDomain(assignment._domain, pushCb);
             genesis.getContract().setStatus(0, pushCb)
-            genesis.getContract().setTime(assignment.time, pushCb);
+            genesis.getContract().setTime(Math.floor(assignment._time), pushCb);
             genesis.getContract().setCreated(Date.now().toString(), pushCb);
             genesis.getContract().setPerformed('', pushCb);
-            genesis.getContract().setMultiple(assignment.multiple, pushCb);
+            genesis.getContract().setMaximum(assignment._maximum, pushCb);
             genesis.getContract().setRequest('', pushCb);
-            assignment["created"] = Date.now().toString();
-            assignment["performed"] = '';
-            assignment["assignee"] = '';
-            assignment["status"] = 0;
-            assignment["request"] = '';
-            assignments.push(assignment);
+            genesis.getContract().setDeadline(assignment._deadline, pushCb);
+            genesis.getContract().setHandicap(parseInt(assignment._handicap, 10), pushCb);
+            genesis.getContract().setHash(newHash);
+            console.log("handicap: " + parseInt(Math.floor(assignment._handicap), 10));
+            nAssignment["name"] = assignment._name;
+            nAssignment["description"] = assignment._description;
+            nAssignment["lecturer"] = assignment._lecturer;
+            nAssignment["domain"] = assignment._domain;
+            nAssignment["time"] = assignment._time;
+            nAssignment["maximum"] = assignment._maximum;
+            nAssignment["created"] = Date.now().toString();
+            nAssignment["performed"] = '';
+            nAssignment["assignee"] = '';
+            nAssignment["status"] = 0;
+            nAssignment["request"] = '';
+            nAssignment["handicap"] = assignment._handicap;
+            nAssignment["deadline"] = assignment._deadline;
+            nAssignment["hash"] = newHash;
+            assignments.push(nAssignment);
 
             set();
         } else {
-            throw new Error("Domain not found or name already exists or multiple not valid.");
+            throw new Error("Domain not found or name already exists.");
         }
     },
 
     addRequest: function (assignment, user) {
         var index = getIndex(assignments, assignment);
         if (index > -1) {
-            if (assignments[index].status < 2) {
+            if (assignments[index].status == 0) {
                 var req = assignments[index].request;
                 var assignees = assignments[index].assignee;
-                if (assignees != '' && assignments[index].multiple == 'yes' || assignees == '') {
-                    if (req === '' && assignees.indexOf(user) == -1) {
-                        req = '' + user;
-                        genesis.getContract().changeRequest(index, req, changeRequestCb);
-                        assignments[index].request = req;
-                        set();
-                    } else if (req.indexOf(user) == -1 && assignees.indexOf(user) == -1) {
-                        req = req + ', ' + user;
-                        genesis.getContract().changeRequest(index, req, changeRequestCb);
-                        assignments[index].request = req;
-                        set();
-                    } else {
-                        throw new Error("Double request.");
-                    }
+                if (req === '' && assignees.indexOf(user) == -1) {
+                    req = '' + user;
+                    genesis.getContract().changeRequest(index, req, changeRequestCb);
+                    assignments[index].request = req;
+                    set();
+                } else if (req.indexOf(user) == -1 && assignees.indexOf(user) == -1) {
+                    req = req + ', ' + user;
+                    genesis.getContract().changeRequest(index, req, changeRequestCb);
+                    assignments[index].request = req;
+                    set();
                 } else {
-                    throw new Error("Can't add other assignees.");
+                    throw new Error("Double request.");
                 }
             } else {
                 throw new Error("Assignment is closed.");
@@ -427,21 +455,37 @@ module.exports = {
 
     changeAssignee: function (name, assignee) {
         var index = getIndex(assignments, name);
-        if (assignments[index].assignee != '' && assignments[index].multiple == "yes" && assignments[index].request.indexOf(assignee) > -1) {
+        if (assignments[index].request.indexOf(assignee) > -1 && assignments[index].assignee.indexOf(assignee) == -1 && assignments[index].assignee != '') {
             genesis.getContract().changeAssignee(index, assignments[index].assignee + ', ' + assignee, changeAssigneeCb);
             assignments[index].assignee += ', ' + assignee;
-            assignments[index].status = 1;
             this.deleteRequest(name, assignee);
+            checkIfClosed();
             set();
         } else if (assignments[index].assignee == '' && assignments[index].request.indexOf(assignee) > -1) {
             genesis.getContract().changeAssignee(index, assignee, changeAssigneeCb);
             assignments[index].assignee = assignee;
-            assignments[index].status = 1;
             this.deleteRequest(name, assignee);
+            checkIfClosed(index);
             set();
-            return 1;
         } else {
             throw new Error("Operation not allowed.");
+        }
+    },
+
+    reset: function (name) {
+        var index = getIndex(assignments, name);
+
+        if (index != -1) {
+            genesis.getContract().changeRequest(index, '');
+            genesis.getContract().changeAssignee(index, '');
+            genesis.getContract().changeStatus(index, 0);
+            assignments[index].request = '';
+            assignments[index].assignee = '';
+            assignments[index].status = 0;
+
+            set();
+        } else {
+            throw new Error("Assignment not found.");
         }
     },
 
@@ -451,11 +495,16 @@ module.exports = {
             genesis.getContract().changeStatus(index, status, changeStatusCb);
             assignments[index].status = status;
 
+            if (status == 1) {
+                assignments[index].request = "";
+                genesis.getContract().changeRequest(index, "", changeRequestCb);
+            }
             if (status == 2) {
-                assignments[index].request = '';
-                assignments[index].performed = Date.now();
+                addHours(assignments[index].assignee, assignments[index].deadline, assignments[index].handicap, assignments[index].time);
+                assignments[index].request = "";
+                assignments[index].performed = Date.now().toString();
                 genesis.getContract().changePerformed(index, assignments[index].performed);
-                genesis.getContract().changeRequest(index, '');
+                genesis.getContract().changeRequest(index, "", changeRequestCb);
             }
 
             set();
@@ -532,7 +581,7 @@ function setAssignmentsByAssignee() {
 
 function setAssignmentsByDomain() {
     assignments.forEach(function (value) {
-        if (assignmentsByDomain[value.domain] == null) {
+        if (assignmentsByDomain[value.domain] == undefined) {
             assignmentsByDomain[value.domain] = new Array(value);
         } else {
             var arr = assignmentsByDomain[value.domain];
@@ -566,18 +615,6 @@ function setAssignmentsByTime() {
     });
 }
 
-function setAssignmentsByMultiple() {
-    assignments.forEach(function (value) {
-        if (assignmentsByMultiple[value.multiple] == undefined) {
-            assignmentsByMultiple[value.multiple] = new Array(value);
-        } else {
-            var arr = assignmentsByMultiple[value.multiple];
-            arr.push(value);
-            assignmentsByMultiple[value.multiple] = arr;
-        }
-    });
-}
-
 function getIndex(arr, name) {
     var x;
 
@@ -596,13 +633,11 @@ function set() {
     assignmentsByLecturer = {};
     assignmentsByStatus = {};
     assignmentsByTime = {};
-    assignmentsByMultiple = {};
     setAssignmentsByLecturer();
     setAssignmentsByAssignee();
     setAssignmentsByDomain();
     setAssignmentsByTime();
     setAssignmentsByStatus();
-    setAssignmentsByMultiple();
 }
 
 function changeAssigneeCb(error) {
@@ -631,10 +666,10 @@ function changeRequestCb(error) {
 
 function pushCb(error) {
     if (!error) {
-        console.log("Performing transaction of assignment. " + (100 / 11 * (12 - part)) + "% done.");
+        console.log("Performing transaction of assignment. " + (100 / 13 * (14 - part)) + "% done.");
 
         if (part === 1) {
-            part = 11;
+            part = 13;
         } else {
             part = part - 1;
         }
@@ -657,5 +692,47 @@ function setBalanceCb(error) {
         console.log("Successfully pushed balance.");
     } else {
         console.log("Error pushing balance, see stacktrace.\n" + error.stack);
+    }
+}
+
+function checkIfClosed(index) {
+    var assignment = assignments[index];
+    var split = assignment.assignee.split(', ');
+    var length = split.length;
+
+    if (length == 1 && split[0] == '') {
+        length = 0;
+    }
+
+    if (length == assignment.maximum) {
+        assignments[index].request = "";
+        assignments[index].status = 1;
+        genesis.getContract().changeStatus(assignment.name, 1);
+        genesis.getContract().changeRequest(assignment.name, "");
+        set();
+    }
+}
+
+function addHours(assignees, deadline, handicap, hours) {
+    var split = assignees.split(',');
+    var x = 0;
+
+    console.log("requests: " + assignees);
+    console.log("split: " + split);
+
+    for (x = 0; x < split.length; x++) {
+        if (split[x] != '') {
+            var current = new Date().getTime();
+
+            if (current > parseInt(deadline, 10)) {
+                console.log("result: " + parseInt(hours, 10) * parseInt(handicap, 10) / 100);
+                console.log(Math.floor(parseInt(hours, 10) * parseInt(handicap, 10) / 100));
+                module.exports.setBalance(split[x], Math.floor(parseInt(hours, 10) * parseInt(handicap, 10) / 100));
+            } else {
+                console.log("before deadline");
+                console.log("user: " + split[x] + ", hours: " + hours);
+                module.exports.setBalance(split[x], hours);
+            }
+        }
     }
 }

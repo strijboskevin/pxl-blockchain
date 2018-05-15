@@ -1,0 +1,26 @@
+<div [style.height.px]=height [style.width.px]=width>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-8">
+        <img [style.height.px]=height class="img-fluid"
+             src="https://www.pxl.be/Assets/website/pxl_algemeen/afbeeldingen/pxl_beeld_geselecteerd.jpg"/>
+      </div>
+      <div class="col-3" style="margin-top: 15%;">
+        <p class="lead">
+          Op deze website kun je je I-talent opdrachten beheren. Zo kun je opdrachten aanvragen, je voor opdrachten
+          inschrijven
+          en raadplegen hoeveel uren je al hebt gepresteerd. Ook kun je zoeken in het archief welke opdrachten er allemaal
+          al zijn voltooid.
+          Lectoren kunnen opdrachten creëren en beoordelen. Ook kunnen ze beslissen welke studenten ze willen toewijzen
+          aan de opdrachten.
+
+          <br /> <br />
+
+          Klik op de knop "connecteren" om in te loggen met je studenten e-mail. Gebruik je e-mail in het formaat
+          'voornaam.achternaam@student.pxl.be'.
+        </p>
+        <button (click)="onLogin()" class="btn btn-outline-success">Connecteren</button>
+      </div>
+    </div>
+  </div>
+</div>

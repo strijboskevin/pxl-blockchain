@@ -1,0 +1,58 @@
+<app-navbar-component></app-navbar-component>
+<div *ngIf="(assignments | async) as assignmentsArray; else noAssignments" class="mt-5">
+  <div *ngIf="assignmentsArray.length === 0">
+    <div class="row mt-5 justify-content-center">
+      <div class="col-8">
+        <div class="alert alert-warning" role="alert">
+          <p class="lead">
+            Je hebt geen open opdrachten!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center" *ngIf="assignmentsArray.length > 0">
+    <div class="col-8">
+      <p class="lead d-inline btn btn-outline-success mr-3 float-right" style="cursor: pointer;" (click)="toggleBusy()" *ngIf="!busy">+</p>
+      <p class="lead d-inline btn btn-outline-danger mr-3 float-right" style="cursor: pointer;" (click)="toggleBusy()" *ngIf="busy">-</p>
+      <h4 class="display-4 text-secondary d-inline-block"> Bezig </h4>
+      <div *ngIf="busy">
+        <div *ngFor="let assignment of assignmentsArray; let i=index" class="container-fluid">
+          <p class="lead" *ngIf="assignment.status==1" style="cursor: pointer;"
+             [routerLink]="['/assignment/', assignment.name]">
+            {{assignment.name}} aangemaakt op {{assignment.created | date: 'yyyy-MM-dd'}} in opdracht van
+            {{assignment.lecturer}} </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center" *ngIf="assignmentsArray.length > 0">
+    <div class="col-8">
+      <p class="lead d-inline btn btn-outline-success mr-3 float-right" style="cursor: pointer;" (click)="toggleDone()" *ngIf="!done">+</p>
+      <p class="lead d-inline btn btn-outline-danger mr-3 float-right" style="cursor: pointer;" (click)="toggleDone()" *ngIf="done">-</p>
+      <h2 class="display-4 text-secondary d-inline-block"> Klaar </h2>
+      <div *ngIf="done">
+        <div *ngFor="let assignment of assignmentsArray; let i=index" class="container-fluid">
+          <p class="lead" *ngIf="assignment.status==2" style="cursor: pointer;"
+             [routerLink]="['/assignment/', assignment.name]">
+            {{assignment.name}} aangemaakt op {{assignment.created | date: 'yyyy-MM-dd'}} in opdracht van
+            {{assignment.lecturer}} </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <div class="alert alert-primary mt-5" *ngIf="assignmentsArray.length > 0">
+        Klik op een item om bijkomende informatie te zien!
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #noAssignments>
+  <div class="col-8 offset-2 mt-5">
+    <p class="lead">
+      Loading...
+    </p>
+  </div>
+</ng-template>

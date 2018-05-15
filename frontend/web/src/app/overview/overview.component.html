@@ -1,0 +1,114 @@
+<app-navbar-component></app-navbar-component>
+<div class="container-fluid">
+  <div *ngIf="(assignments | async) as assignmentsArray; else noAssignments">
+    <div *ngIf="assignmentsArray.length === 0">
+      <div class="row mt-5 justify-content-center">
+        <div class="col-8">
+          <div class="alert alert-warning" role="alert">
+            <p class="lead">
+              Je hebt nog geen opdrachten volbracht!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+      <div class="col-3">
+        <div *ngIf="ready && assignmentsArray.length > 0">
+          <h3 class="text-secondary"> Overzicht </h3>
+          <div *ngFor="let domain of domainsObj; let i=index">
+            <p class="lead d-inline">
+              {{domain}}: {{hours[i]}}u </p>
+          </div>
+          <p class="lead" *ngIf="balanceLoaded">
+            <strong>Totaal: </strong> {{balance.amount}}u </p>
+        </div>
+        <button class="btn btn-outline-info mt-2" data-toggle="modal" data-target="#changeHours" *ngIf="jobtitle=='Personeel'"> Wijzigen</button>
+        <button class="btn btn-outline-info mt-2" data-toggle="modal" data-target="#sendMessage" *ngIf="jobtitle=='Personeel'"> Bericht sturen</button>
+        <button class="btn btn-outline-info mt-2" [routerLink]="['/myrequests/', username]" *ngIf="jobtitle=='Personeel'"> Aanvragen</button>
+        <button class="btn btn-outline-info mt-2" [routerLink]="['/myassignments/', username]" *ngIf="jobtitle=='Personeel'"> Opdrachten</button>
+        <button class="btn btn-outline-info mt-2" [routerLink]="['/messages/', username]" *ngIf="jobtitle=='Personeel'"> Berichten</button>
+      </div>
+      <div class="col-5">
+        <div *ngIf="assignmentsArray.length > 0">
+          <div *ngIf="(domains | async) as domainsArray;">
+            <div *ngFor="let domain of domainsArray; let i=index;">
+              <h4 class="display-4 text-secondary d-inline-block"> {{domain}} </h4>
+              <div *ngFor="let assignment of assignmentsArray; let i=index" class="container-fluid">
+                <p class="lead" *ngIf="assignment.domain==domain" style="cursor: pointer;"
+                   [routerLink]="['/assignment/', assignment.name]">
+                  {{assignment.name}} aangemaakt op {{assignment.created | date: 'yyyy-MM-dd'}} in opdracht van
+                  {{assignment.lecturer}} </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #noAssignments>
+  <div class="col-8 offset-2 mt-5">
+    <p class="lead">
+      Loading...
+    </p>
+  </div>
+</ng-template>
+
+<div id="changeHours" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Uren</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form #assignmentForm="ngForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="hours">Aantal uren</label>
+            <input type="text" class="form-control" id="hours" name="hours" required [(ngModel)]="change"
+                   #hoursel="ngModel">
+            <div [hidden]="hoursel.valid || hoursel.pristine"
+                 class="alert alert-danger">
+              Uren zijn vereist
+            </div>
+            <button type="submit" class="btn btn-outline-success mt-2" [disabled]="!assignmentForm.form.valid">Wijzigen
+            </button>
+          </div>
+        </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sendMessage" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Bericht versturen</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form #assignmentForm="ngForm" (ngSubmit)="onSubmitMessage()">
+          <div class="form-group">
+            <label for="hours">Bericht</label>
+            <input type="text" class="form-control" id="message" name="message" required [(ngModel)]="text"
+                   #msgel="ngModel">
+            <div [hidden]="msgel.valid || msgel.pristine"
+                 class="alert alert-danger">
+              Bericht is vereist
+            </div>
+            <button type="submit" class="btn btn-outline-success mt-2" [disabled]="!assignmentForm.form.valid">Versturen
+            </button>
+          </div>
+        </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

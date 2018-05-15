@@ -1,0 +1,67 @@
+<app-navbar-component></app-navbar-component>
+<div class="container-fluid" *ngIf="ready">
+  <div class="row mt-5 justify-content-center">
+    <div class="col-8">
+      <h2 class="display-5 d-inline">{{assignment.name}} </h2>
+      <span *ngIf="assignment.status==0" class="badge badge-success">Open</span>
+      <span *ngIf="assignment.status==1" class="badge badge-danger">Gesloten</span>
+      <span *ngIf="assignment.status==2" class="badge badge-info">Klaar</span>
+      <button *ngIf="canRequest" (click)="postRequest()" class="btn btn-outline-success float-right"> Aanvragen</button>
+      <hr/>
+      <div class="col-4 float-left">
+        <ul style="margin-left: 0; padding-left: 0;">
+          <li class="list-group-item">
+            Lector: {{assignment.lecturer}}
+          </li>
+          <li class="list-group-item">
+            Domein: {{assignment.domain}}
+          </li>
+          <li class="list-group-item">
+            Aangemaakt op: {{assignment.created | date: 'yyyy-MM-dd'}}
+          </li>
+          <li class="list-group-item">
+            Aantal uren: {{assignment.time}}
+          </li>
+          <li class="list-group-item">
+            Aantal deelnemers: {{assignment.maximum}}
+          </li>
+          <li class="list-group-item">
+            Deadline: {{assignment.deadline | date: 'yyyy-MM-dd - HH:mm:ss'}}
+          </li>
+          <li class="list-group-item">
+            Handicap: {{assignment.handicap}}%
+          </li>
+        </ul>
+      </div>
+      <div class="col-8 float-right">
+        <p class="lead float-right">
+          {{assignment.description}}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-8 mt-5 offset-2">
+    <span class="alert alert-success d-block">
+      <strong>HASH: </strong> {{assignment.hash}}.
+    </span>
+  </div>
+  <div class="col-8 offset-2">
+    <span class="alert alert-warning d-block">
+      Klik op de knop "aanvragen" om deze opdracht aan te vragen bij {{assignment.lecturer}}.
+    </span>
+  </div>
+  <div class="col-8 mt-1 offset-2" *ngIf="jobtitle == 'Personeel'">
+    <div *ngIf="assignment.request != ''">
+    <span class="alert alert-info d-block">
+      Aanvragen: {{assignment.request}}
+    </span>
+    </div>
+  </div>
+  <div class="col-8 mt-1 offset-2" *ngIf="jobtitle == 'Personeel'">
+    <div *ngIf="assignment.assignee != ''">
+    <span class="alert alert-info d-block">
+      Deelnemers: {{assignment.assignee}}
+    </span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,196 @@
+<app-navbar-component></app-navbar-component>
+<div class="row mt-5 justify-content-center">
+  <div class="col-8">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <h2 class="display-4 d-inline"> Nieuwe opdracht </h2>
+        <p class="lead d-inline btn btn-outline-success float-right" style="cursor: pointer;" (click)="toggleNew()"
+           *ngIf="!newAssignment">+</p>
+        <p class="lead d-inline btn btn-outline-danger float-right" style="cursor: pointer;" (click)="toggleNew()"
+           *ngIf="newAssignment">-</p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div *ngIf="newAssignment">
+          <form #assignmentForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="name">Titel</label>
+              <input type="text" class="form-control" id="name" name="name" required [(ngModel)]="name"
+                     #nameel="ngModel">
+              <div [hidden]="nameel.valid || nameel.pristine"
+                   class="alert alert-danger">
+                Naam is vereist
+              </div>
+              <label for="description">Beschrijving</label>
+              <textarea class="form-control" id="description" name="description" required
+                        [(ngModel)]="description"
+                        #desc="ngModel"></textarea>
+              <div [hidden]="desc.valid || desc.pristine"
+                   class="alert alert-danger">
+                Omschrijving is vereist
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="name">Lector</label>
+              <input type="text" class="form-control" id="lecturer" name="lecturer" disabled placeholder="{{username}}">
+              <label for="domain">Domein</label>
+              <select class="form-control" id="domain" name="domain" required [(ngModel)]="domain">
+                <option *ngFor="let domainVal of domains" [value]="domainVal">{{domainVal}}</option>
+              </select>
+              <label for="hours">Aantal uren</label>
+              <input type="text" class="form-control" id="hours" name="hours" required pattern="\d+$" [(ngModel)]="time"
+                     #hours="ngModel">
+              <div [hidden]="hours.valid || hours.pristine"
+                   class="alert alert-danger">
+                Aantal uur is vereist
+              </div>
+              <label for="participants">Aantal deelnemers</label>
+              <input type="text" class="form-control" id="participants" name="participants" required pattern="\d+$"
+                     [(ngModel)]="participants" #parts="ngModel">
+              <div [hidden]="parts.valid || parts.pristine"
+                   class="alert alert-danger">
+                Aantal deelnemers is vereist
+              </div>
+              <label for="deadline">Deadline</label>
+              <input type="text" class="form-control" id="deadline" name="deadline" required pattern='(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})'
+                     [(ngModel)]="deadline" #deadl="ngModel">
+              <div [hidden]="deadl.valid || deadl.pristine"
+                   class="alert alert-danger">
+                Deadline is vereist. YYYY-dd-mmTHH:mm:ss
+              </div>
+              <label for="handicap">Handicap</label>
+              <input type="text" class="form-control" id="handicap" name="handicap" required pattern="^([0-9]|[1-9][0-9]|100)$"
+                     [(ngModel)]="handicap" #hand="ngModel">
+              <div [hidden]="hand.valid || hand.pristine"
+                   class="alert alert-danger">
+                Handicap is vereist? 0...100
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-outline-success" [disabled]="!assignmentForm.form.valid">Toevoegen
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="(assignments | async) as assignmentsArray; else noAssignments" class="mt-5">
+  <div *ngIf="assignmentsArray.length === 0">
+    <div class="row mt-5 justify-content-center">
+      <div class="col-8">
+        <div class="alert alert-warning" role="alert">
+          <p class="lead">
+            Je hebt geen open opdrachten!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center" *ngIf="assignmentsArray.length>0">
+    <div class="col-8">
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <h4 class="text-secondary d-inline"> Open </h4>
+          <p class="lead d-inline btn btn-outline-success float-right" style="cursor: pointer;" (click)="toggleOpen()"
+             *ngIf="!open">+</p>
+          <p class="lead d-inline btn btn-outline-danger float-right" style="cursor: pointer;" (click)="toggleOpen()"
+             *ngIf="open">-</p>
+        </div>
+      </div>
+      <div *ngIf="open">
+        <div *ngFor="let assignment of assignmentsArray; let i=index" class="mt-2">
+          <div *ngIf="assignment.status==0">
+            <div class="row justify-content-center">
+              <div class="col-12">
+                <p class="lead d-inline text-secondary" style="cursor: pointer;"
+                   [routerLink]="['/assignment/', assignment.name]">
+                  {{assignment.name}} aangemaakt op {{assignment.created | date: 'yyyy-MM-dd'}} </p>
+                <button class="btn btn-outline-success float-right" (click)="start(assignment.name)">Start</button>
+                <button class="btn btn-outline-danger float-right mr-2" (click)="reset(assignment.name)">reset
+                </button>
+                <button class="btn btn-outline-warning float-right mr-2" (click)="done(assignment.name)">Klaar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center mt-4" *ngIf="assignmentsArray.length>0">
+    <div class="col-8">
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <h4 class="text-secondary d-inline"> Bezig </h4>
+          <p class="lead d-inline btn btn-outline-success float-right" style="cursor: pointer;" (click)="toggleBusy()"
+             *ngIf="!busy">+</p>
+          <p class="lead d-inline btn btn-outline-danger float-right" style="cursor: pointer;" (click)="toggleBusy()"
+             *ngIf="busy">-</p>
+        </div>
+      </div>
+      <div *ngIf="busy">
+        <div *ngFor="let assignment of assignmentsArray; let i=index" class="mt-3">
+          <div *ngIf="assignment.status==1">
+            <div class="row justify-content-center">
+              <div class="col-12">
+                <p class="lead d-inline" style="cursor: pointer;" [routerLink]="['/assignment/', assignment.name]">
+                  {{assignment.name}} aangemaakt op {{assignment.created | date: 'yyyy-MM-dd'}} </p>
+                <button class="btn btn-outline-danger float-right mr-2" (click)="reset(assignment.name)">reset
+                </button>
+                <button class="btn btn-outline-warning float-right mr-2" (click)="done(assignment.name)">Klaar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center mt-4" *ngIf="assignmentsArray.length>0">
+    <div class="col-8">
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <h4 class="text-secondary d-inline"> Klaar </h4>
+          <p class="lead d-inline btn btn-outline-success float-right" style="cursor: pointer;" (click)="toggleDone()"
+             *ngIf="!finished">+</p>
+          <p class="lead d-inline btn btn-outline-danger float-right" style="cursor: pointer;" (click)="toggleDone()"
+             *ngIf="finished">-</p>
+        </div>
+      </div>
+      <div *ngIf="finished">
+        <div *ngFor="let assignment of assignmentsArray; let i=index" class="mt-3">
+          <div *ngIf="assignment.status==2">
+            <div class="row justify-content-center">
+              <div class="col-12">
+                <p class="lead d-inline" style="cursor: pointer;" [routerLink]="['/assignment/', assignment.name]">
+                  {{assignment.name}} aangemaakt op {{assignment.created | date: 'yyyy-MM-dd'}} </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center" *ngIf="assignmentsArray.length > 0">
+    <div class="col-8">
+      <div class="alert alert-primary mt-3">
+        Klik op een item om bijkomende informatie te zien!
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #noAssignments>
+  <div class="col-8 offset-2 mt-5">
+    <p class="lead">
+      Loading...
+    </p>
+  </div>
+</ng-template>
+<ng-template #noDomains>
+  <p class="lead">
+    Loading domains...
+  </p>
+</ng-template>

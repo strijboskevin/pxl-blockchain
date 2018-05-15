@@ -1,0 +1,35 @@
+<app-navbar-component></app-navbar-component>
+<div *ngIf="requests; else noRequests">
+  <div *ngIf="requests.length === 0">
+    <div class="row mt-5 justify-content-center">
+      <div class="col-8">
+        <div class="alert alert-warning" role="alert">
+          <p class="lead">
+            Je hebt geen open aanvragen!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngFor="let request of requests" class="container-fluid">
+    <div class="row mt-5 justify-content-center">
+      <div class="col-8">
+        <h2 class="display-5 d-inline" style="cursor: pointer;" [routerLink]="['/assignment/', request.name]"> {{request.name}} </h2>
+        <p class="lead d-inline"> {{request.created | date:'yyyy-MM-dd'}} </p>
+        <button class="float-right btn btn-outline-danger" (click)="deleteRequest(request.name)"> Verwijderen </button>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-8">
+        <hr class="my-4"/>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #noRequests>
+  <div class="col-8 offset-2 mt-5">
+    <p class="lead">
+      Loading...
+    </p>
+  </div>
+</ng-template>

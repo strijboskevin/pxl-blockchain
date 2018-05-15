@@ -1,0 +1,85 @@
+<app-navbar-component></app-navbar-component>
+<div class="row justify-content-center mt-5">
+  <div class="col-8">
+    <div *ngIf="(assignments | async) as assignmentsArray; else noassignments">
+      <div *ngIf="assignmentsArray.length === 0">
+        <div class="alert alert-warning" role="alert">
+          <p class="lead">
+            Er zijn geen opdrachten aangemaakt. Check back later!
+          </p>
+        </div>
+      </div>
+      <div class="row justify-content-center" *ngIf="assignmentsArray.length > 0">
+        <div class="col-12">
+          <h4 class="text-secondary d-inline"> Open </h4>
+          <p class="lead d-inline btn btn-outline-success float-right" style="cursor: pointer;" (click)="toggleOpen()"
+             *ngIf="!open">+</p>
+          <p class="lead d-inline btn btn-outline-danger float-right" style="cursor: pointer;" (click)="toggleOpen()"
+             *ngIf="open">-</p>
+        </div>
+      </div>
+      <div *ngIf="open">
+        <div *ngFor="let assignment of assignmentsArray" class="container-fluid">
+          <div class="row justify-content-center" *ngIf="assignment.status==0">
+            <div class="col-12">
+              <p class="lead d-inline" style="cursor:pointer;" [routerLink]="['/assignment', assignment.name]">
+                {{assignment.name}} door
+                {{assignment.lecturer}} </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="jobtitle=='Personeel'">
+        <div class="row justify-content-center" *ngIf="assignmentsArray.length > 0">
+          <div class="col-12">
+            <h4 class="text-secondary d-inline"> Bezig </h4>
+            <p class="lead d-inline btn btn-outline-success float-right" style="cursor: pointer;" (click)="toggleBusy()"
+               *ngIf="!busy">+</p>
+            <p class="lead d-inline btn btn-outline-danger float-right" style="cursor: pointer;" (click)="toggleBusy()"
+               *ngIf="busy">-</p>
+          </div>
+        </div>
+        <div *ngFor="let assignment of assignmentsArray" class="container-fluid">
+          <div *ngIf="busy">
+            <div class="row justify-content-center" *ngIf="assignment.status==1">
+              <div class="col-12">
+                <p class="lead d-inline" style="cursor:pointer;" [routerLink]="['/assignment', assignment.name]">
+                  {{assignment.name}} door
+                  {{assignment.lecturer}} </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="jobtitle=='Personeel'">
+        <div class="row justify-content-center" *ngIf="assignmentsArray.length > 0">
+          <div class="col-12">
+            <h4 class="text-secondary d-inline"> Klaar </h4>
+            <p class="lead d-inline btn btn-outline-success float-right" style="cursor: pointer;" (click)="toggleDone()"
+               *ngIf="!finished">+</p>
+            <p class="lead d-inline btn btn-outline-danger float-right" style="cursor: pointer;" (click)="toggleDone()"
+               *ngIf="finished">-</p>
+          </div>
+        </div>
+        <div *ngFor="let assignment of assignmentsArray" class="container-fluid">
+          <div *ngIf="finished">
+            <div class="row justify-content-center" *ngIf="assignment.status==2">
+              <div class="col-12">
+                <p class="lead d-inline" style="cursor:pointer;" [routerLink]="['/assignment', assignment.name]">
+                  {{assignment.name}} door
+                  {{assignment.lecturer}} </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #noassignments>
+  <div class="col-8">
+    <p class="lead">
+      Loading...
+    </p>
+  </div>
+</ng-template>

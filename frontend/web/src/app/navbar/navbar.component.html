@@ -1,0 +1,56 @@
+<div *ngIf="nav.visible">
+  <div class="row mt-5 justify-content-center">
+    <div class="col-8">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" [routerLink]="['/home']">I-Talent</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item" [ngClass]="{active: this.nav.element === 'home'}">
+              <a class="nav-link" [routerLink]="['/home']">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <div *ngIf="(requests | async) as requestsArray">
+              <li class="nav-item" [ngClass]="{active: this.nav.element === 'myrequests'}">
+                <a class="nav-link" [routerLink]="['/myrequests']">Aanvragen
+                  <span class="badge badge-info">{{requestsArray.length}}</span></a>
+              </li>
+            </div>
+            <div *ngIf="(assignments | async) as assignmentsArray">
+              <li class="nav-item" [ngClass]="{active: this.nav.element === 'studentassignments'}">
+                <a class="nav-link" [routerLink]="['/myassignments']">Opdrachten
+                  <span class="badge badge-info">{{assignmentsArray.length}}</span></a>
+              </li>
+            </div>
+            <li class="nav-item" [ngClass]="{active: this.nav.element === 'overview'}">
+              <a class="nav-link" [routerLink]="['/overview']">Overview</a>
+            </li>
+            <div *ngIf="messReady">
+              <li class="nav-item" [ngClass]="{active: this.nav.element === 'messages'}">
+                <a class="nav-link" [routerLink]="['/messages']">Berichten
+                  <span class="badge badge-danger">{{unread}}</span> </a>
+              </li>
+            </div>
+            <li class="nav-item" [ngClass]="{active: this.nav.element === 'archive'}">
+              <a class="nav-link" [routerLink]="['/archive']">Archief</a>
+            </li>
+            <div *ngIf="reqReady">
+              <li class="nav-item" [ngClass]="{active: this.nav.element === 'newrequests'}"
+                  *ngIf="jobtitle == 'Personeel'">
+                <a class="nav-link" [routerLink]="['/newrequests']">Nieuwe aanvragen
+                  <span class="badge badge-danger">{{count}}</span> </a>
+              </li>
+            </div>
+            <li class="nav-item" [ngClass]="{active: this.nav.element === 'lecturerassignments'}"
+                *ngIf="jobtitle=='Personeel'">
+              <a class="nav-link" [routerLink]="['/lecturerassignments']">Mijn opdrachten</a>
+            </li>
+          </ul>
+        </div>
+        <button class="btn btn-danger float-right" (click)="logout()">Logout</button>
+      </nav>
+    </div>
+  </div>
+</div>

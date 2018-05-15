@@ -1,0 +1,55 @@
+<app-navbar-component></app-navbar-component>
+<div *ngIf="(assignments | async) as assignmentsArray; else noassignments">
+  <div *ngIf="assignmentsArray.length === 0">
+    <div class="row mt-5 justify-content-center">
+      <div class="col-8">
+        <div class="alert alert-warning" role="alert">
+          <p class="lead">
+            Er zijn geen open opdrachten beschikbaar voor jou. Check back later!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngFor="let assignment of assignmentsArray" class="container-fluid">
+    <div class="row mt-5 justify-content-center">
+      <div class="col-8">
+        <h2 class="display-5 d-inline"> {{assignment.name}} </h2>
+        <span class="badge badge-secondary"> {{assignment.domain}} </span>
+        <span class="badge badge-info"> {{assignment.time}} </span>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-8">
+        <hr class="my-4"/>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-8">
+        <div *ngIf="assignment.description.length < 100">
+          <p class="lead">
+            {{ assignment.description }}
+            <a class="d-inline" [routerLink]="['/assignment/', assignment.name]">
+              Meer
+            </a>
+          </p>
+        </div>
+        <div *ngIf="assignment.description.length > 100">
+          <p class="lead">
+            {{ assignment.description.substr(0,100) + '...' }}
+            <a class="d-inline" [routerLink]="['/assignment/', assignment.name]">
+              Meer
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #noassignments>
+  <div class="col-8 offset-2 mt-5">
+    <p class="lead">
+      Loading...
+    </p>
+  </div>
+</ng-template>

@@ -1,0 +1,45 @@
+<app-navbar-component></app-navbar-component>
+<div *ngIf="ready; else noRequests">
+  <div *ngIf="!found">
+    <div class="row mt-5 justify-content-center">
+      <div class="col-8">
+        <div class="alert alert-warning" role="alert">
+          <p class="lead">
+            Je hebt geen open aanvragen!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngFor="let request of requests; let i=index" class="container-fluid">
+    <div *ngIf="request != null">
+      <div class="row mt-5 justify-content-center">
+        <div class="col-8">
+          <p class="lead d-inline" style="cursor: pointer;" [routerLink]="['/overview/', username]">
+            {{request.user}} voor </p>
+          <p class="lead d-inline" style="cursor: pointer;" [routerLink]="['/assignment/', request.assignment]">
+            {{request.assignment}}, {{amountOfRequests[i]}} aanvragen en {{amountOfAssignees[i]}}
+            deelnemers </p>
+          <button class="btn btn-outline-success float-right" (click)="addAssignee(request.assignment, request.user)">
+            Aanvaarden
+          </button>
+          <button class="btn btn-outline-danger float-right mr-2"
+                  (click)="deleteRequest(request.assignment, request.user)"> Weigeren
+          </button>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <hr class="my-4"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #noRequests>
+  <div class="col-8 offset-2 mt-5">
+    <p class="lead">
+      Loading...
+    </p>
+  </div>
+</ng-template>
