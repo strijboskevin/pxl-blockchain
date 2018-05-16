@@ -26,7 +26,7 @@ module.exports = {
                 'Authorization': request.get('Authorization')
             }
         };
-
+        
         var req = http.get(options, res => {
             res.on('data', chunk => {
                 chunk = JSON.parse(chunk);

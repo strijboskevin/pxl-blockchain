@@ -52,33 +52,7 @@ export class OverviewComponent implements OnInit {
     }
 
     if (localStorage.getItem('username') !== null && this.timer.loaded) {
-      this.assignments = this.assignmentService.getAssignmentsByUserByStatus(2, this.username);
-      this.domains = this.assignmentService.getDomains();
-      this.assignmentService.getDomains().subscribe(data => {
-          this.domainsObj = data;
-        },
-        err => {
-          console.log(err);
-        },
-        () => {
-          this.domainsLoaded = true;
-          this.setHours();
-        });
-      this.assignmentService.getAssignmentsByUserByStatus(2, this.username).subscribe(data => {
-          this.assignmentsObj = data;
-        },
-        err => {
-          console.log(err);
-        },
-        () => {
-          this.assignmentsLoaded = true;
-          this.setHours();
-        });
-      this.assignmentService.getBalance(this.username).subscribe(data => {
-        this.balance = data;
-        console.log(this.balance);
-        this.balanceLoaded = true;
-      });
+     this.load();
     } else if (localStorage.getItem('loggedin') == null) {
       this.router.navigate(['']);
     }
@@ -92,6 +66,35 @@ export class OverviewComponent implements OnInit {
   onSubmitMessage() {
     this.messageService.addMessage(localStorage.getItem('username'), this.username, new Date().getTime().toString(), this.text, 'no').subscribe();
     window.location.reload();
+  }
+
+  private load() {
+    this.assignments = this.assignmentService.getAssignmentsByUserByStatus(2, this.username);
+    this.domains = this.assignmentService.getDomains();
+    this.assignmentService.getDomains().subscribe(data => {
+        this.domainsObj = data;
+      },
+      err => {
+        console.log(err);
+      },
+      () => {
+        this.domainsLoaded = true;
+        this.setHours();
+      });
+    this.assignmentService.getAssignmentsByUserByStatus(2, this.username).subscribe(data => {
+        this.assignmentsObj = data;
+      },
+      err => {
+        console.log(err);
+      },
+      () => {
+        this.assignmentsLoaded = true;
+        this.setHours();
+      });
+    this.assignmentService.getBalance(this.username).subscribe(data => {
+      this.balance = data;
+      this.balanceLoaded = true;
+    });
   }
 
   private setHours() {

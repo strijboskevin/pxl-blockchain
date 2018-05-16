@@ -34,8 +34,6 @@ export class HomeComponent implements OnInit {
     this.nav.show();
     this.nav.element = 'home';
 
-    console.log(this.timer.loaded);
-
     if (localStorage.getItem('username') !== null && this.timer.loaded) {
       this.assignments = this.assignmentService.getOpenAssignments(localStorage.getItem('username'));
     } else {
