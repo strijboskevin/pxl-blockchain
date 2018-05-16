@@ -26,9 +26,7 @@ module.exports = {
     },
 
     addMessage: function (sender, recipient, timestamp, text, read) {
-        console.log("before");
         genesis.getContract().addMessage(sender, recipient, timestamp, text, read, addMessageCb);
-        console.log("after");
         messages.push({ sender: sender, recipient: recipient, timestamp: timestamp, text: text, read: read });
         set();
     },
@@ -77,6 +75,6 @@ function addMessageCb(error) {
     if (!error) {
         console.log("Message added.");
     } else {
-        console.log("Something went wrong while added the message. See stacktrace.\n", error.stack);
+        console.log("Something went wrong while adding the message. See stacktrace.\n", error.stack);
     }
 }

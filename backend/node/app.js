@@ -1,5 +1,6 @@
 var logic = require('./logic.js');
 var messages_logic = require('./messages_logic.js');
+var logs_logic = require('./logs_logic.js');
 var express = require('express');
 var bodyParser = require('body-parser');
 var qs = require('querystring');
@@ -7,6 +8,7 @@ var cors = require('cors');
 
 logic.load();
 messages_logic.load();
+logs_logic.load();
 
 var app = express();
 
@@ -41,6 +43,26 @@ app.get('/assignments', function (request, response) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignments());
+    }
+  });
+});
+
+app.get('/logs', function (request, response) {
+  logic.examine(request, function (mail, jobtitle) {
+    if (jobitle !== 'Personeel') {
+      response.sendStatus(401);
+    } else {
+      response.status(200).json(logs_logic.getLogs());
+    }
+  });
+});
+
+app.get('/logs/:start/:end', function (request, response) {
+  logic.examine(request, function (mail, jobtitle) {
+    if (jobitle !== 'Personeel') {
+      response.sendStatus(401);
+    } else {
+      response.status(200).json(logs_logic.getLogsBetween(request.params.start, request.params.end));
     }
   });
 });
