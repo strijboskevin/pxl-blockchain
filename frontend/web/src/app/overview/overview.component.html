@@ -23,11 +23,11 @@
           <p class="lead" *ngIf="balanceLoaded">
             <strong>Totaal: </strong> {{balance.amount}}u </p>
         </div>
-        <button class="btn btn-outline-info mt-2" data-toggle="modal" data-target="#changeHours" *ngIf="jobtitle=='Personeel'"> Wijzigen</button>
-        <button class="btn btn-outline-info mt-2" data-toggle="modal" data-target="#sendMessage" *ngIf="jobtitle=='Personeel'"> Bericht sturen</button>
-        <button class="btn btn-outline-info mt-2" [routerLink]="['/myrequests/', username]" *ngIf="jobtitle=='Personeel'"> Aanvragen</button>
-        <button class="btn btn-outline-info mt-2" [routerLink]="['/myassignments/', username]" *ngIf="jobtitle=='Personeel'"> Opdrachten</button>
-        <button class="btn btn-outline-info mt-2" [routerLink]="['/messages/', username]" *ngIf="jobtitle=='Personeel'"> Berichten</button>
+        <button class="btn btn-outline-info mt-2" data-toggle="modal" data-target="#changeHours" *ngIf="jobtitle.includes('Personeel')"> Wijzigen</button>
+        <button class="btn btn-outline-info mt-2" data-toggle="modal" data-target="#sendMessage" *ngIf="jobtitle.includes('Personeel')"> Bericht sturen</button>
+        <button class="btn btn-outline-info mt-2" [routerLink]="['/myrequests/', username]" *ngIf="jobtitle.includes('Personeel')"> Aanvragen</button>
+        <button class="btn btn-outline-info mt-2" [routerLink]="['/myassignments/', username]" *ngIf="jobtitle.includes('Personeel')"> Opdrachten</button>
+        <button class="btn btn-outline-info mt-2" [routerLink]="['/messages/', username]" *ngIf="jobtitle.includes('Personeel')"> Berichten</button>
       </div>
       <div class="col-5">
         <div *ngIf="assignmentsArray.length > 0">

@@ -1,18 +1,12 @@
-import {Injectable, OnInit} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Configs} from '../shared/configs';
 import {Observable} from 'rxjs/Observable';
 import {InterceptorSkipHeader} from '../interceptors/AuthInterceptor';
-import {MeService} from './me.service';
 
 @Injectable()
 export class TimerService {
-
-  loaded: boolean;
-
-  constructor(private http: HttpClient,
-              private me: MeService) {
-    this.loaded = true;
+  constructor(private http: HttpClient) {
     if (localStorage.getItem('refresh') !== null) {
       let h = new HttpHeaders();
       h = h.set('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8').set(InterceptorSkipHeader, '');

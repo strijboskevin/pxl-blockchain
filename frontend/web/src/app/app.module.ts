@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
@@ -25,6 +25,11 @@ import {MessageService} from './services/message.services';
 import {MessagesComponent} from './messages/messages.component';
 import {RedirectComponent} from './redirect/redirect.component';
 import {TimerService} from './services/timer.service';
+import {LoginService} from './services/login.service';
+import {LoadingComponent} from './loading/loading.component';
+import {LogsComponent} from './logs/logs.component';
+import {LogsService} from './services/logs.service';
+import {SearchComponent} from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +45,10 @@ import {TimerService} from './services/timer.service';
     ArchiveComponent,
     OverviewComponent,
     MessagesComponent,
-    RedirectComponent
+    RedirectComponent,
+    LoadingComponent,
+    LogsComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,
@@ -57,7 +65,9 @@ import {TimerService} from './services/timer.service';
     AssignmentService,
     NavbarService,
     MessageService,
-    TimerService
+    TimerService,
+    LoginService,
+    LogsService
   ],
   bootstrap: [
     AppComponent

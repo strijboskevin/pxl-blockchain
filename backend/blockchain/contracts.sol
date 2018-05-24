@@ -24,7 +24,13 @@ contract Contract {
         string read;
     }
 
+    struct Log {
+        string timestamp;
+        string message;
+    }
+
     Message[] messages;
+    Log[] logs;
 
     function addMessage(string sender, string recipient, string timestamp, string text, string read) {
         messages.length++;
@@ -46,6 +52,20 @@ contract Contract {
 
     function changeRead(uint index, string read) {
         messages[index].read = read;
+    }
+
+    function addLog(string timestamp, string message) {
+        logs.length++;
+        logs[logs.length-1].timestamp = timestamp;
+        logs[logs.length-1].message = message;
+    }
+
+    function getLog(uint index) returns (string, string) {
+        return (logs[index].timestamp, logs[index].message);
+    }
+
+    function getLogsCount() returns (uint) {
+        return logs.length;
     }
 
     function getBalance(string name) returns (uint ) {

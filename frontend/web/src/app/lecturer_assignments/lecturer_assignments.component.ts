@@ -1,11 +1,11 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {AssignmentService} from '../services/assignment.service';
 import {Assignment} from '../models/Assignment';
 import {Router} from '@angular/router';
 import {NavbarService} from '../services/navbar.service';
 import {Observable} from 'rxjs/Observable';
-import {TimerService} from '../services/timer.service';
+import {LoginService} from '../services/login.service';
 
 @Component({
   selector: 'app-lecturer-assignment',
@@ -33,18 +33,22 @@ export class LecturerAssignmentsComponent implements OnInit {
               private assignmentService: AssignmentService,
               private router: Router,
               public nav: NavbarService,
-              private timer: TimerService) {
+              private login: LoginService) {
   }
 
   ngOnInit() {
     this.nav.show();
     this.nav.element = 'lecturerassignments';
-    if (localStorage.getItem('username') !== null && this.timer.loaded) {
-      this.username = localStorage.getItem('username');
-      this.assignmentService.getDomains().subscribe(data => {
-        this.domains = data;
-      })
-      this.assignments = this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username'));
+    if (localStorage.getItem('username') !== null && localStorage.getItem('jobtitle').includes('Personeel')) {
+      if (this.login.loggedIn) {
+        this.username = localStorage.getItem('username');
+        this.assignmentService.getDomains().subscribe(data => {
+          this.domains = data;
+        })
+        this.assignments = this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username'));
+      } else {
+        this.router.navigate(['loading', 'lecturerassignments']);
+      }
     } else {
       this.router.navigate(['']);
     }

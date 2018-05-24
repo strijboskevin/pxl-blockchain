@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {AssignmentService} from '../services/assignment.service';
 import {Assignment} from '../models/Assignment';
@@ -7,7 +7,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NavbarService} from '../services/navbar.service';
 import {Balance} from '../models/Balance';
 import {MessageService} from '../services/message.services';
-import {TimerService} from '../services/timer.service';
+import {LoginService} from '../services/login.service';
 
 @Component({
   selector: 'app-overview',
@@ -37,7 +37,7 @@ export class OverviewComponent implements OnInit {
               public nav: NavbarService,
               private route: ActivatedRoute,
               private messageService: MessageService,
-              private timer: TimerService) {
+              private login: LoginService) {
   }
 
   ngOnInit() {
@@ -45,14 +45,22 @@ export class OverviewComponent implements OnInit {
     this.nav.show();
     this.nav.element = 'overview';
 
-    if (this.jobtitle === 'Personeel') {
+    if (!this.jobtitle.includes('Student')) {
       this.username = this.route.snapshot.params['name'];
     } else {
       this.username = localStorage.getItem('username');
     }
 
-    if (localStorage.getItem('username') !== null && this.timer.loaded) {
-     this.load();
+    if (localStorage.getItem('username') !== null) {
+      if (this.login.loggedIn) {
+        this.load();
+      } else {
+        if (!this.jobtitle.includes('Student')) {
+          this.router.navigate(['loading', 'overview/' + this.username]);
+        } else {
+          this.router.navigate(['loading', 'overview']);
+        }
+      }
     } else if (localStorage.getItem('loggedin') == null) {
       this.router.navigate(['']);
     }
@@ -92,6 +100,7 @@ export class OverviewComponent implements OnInit {
         this.setHours();
       });
     this.assignmentService.getBalance(this.username).subscribe(data => {
+      console.log(data);
       this.balance = data;
       this.balanceLoaded = true;
     });

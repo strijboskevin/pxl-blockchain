@@ -7,6 +7,10 @@ var abi = JSON.parse(fs.readFileSync('./abi/' + address, 'utf8'));
 var ips = require('./ips.json');
 
 var length = 0;
+var msgs_length = 0;
+var loaded = 0;
+
+var messages = [];
 var names = [];
 var descriptions = [];
 var lecturers = [];
@@ -26,6 +30,7 @@ var assignments = [];
 var contract;
 var balancesCb;
 var assignmentsCb;
+var messagesCb;
 
 module.exports = {
 
@@ -116,6 +121,10 @@ function getTimes() {
     for (index = 0; index < length; index++) {
         contract.getTime(index, getTimeCb);
     }
+
+    if (length == 0) {
+        assignmentsCb(assignments);
+    }
 }
 
 function getCreated() {
@@ -168,7 +177,7 @@ function getRequests() {
 
 function getLengthCb(error, l) {
     if (!error) {
-        length = l;
+        length = l.toString(10);
         getAll();
     } else {
         console.log("Something went wrong while loading the length, see stacktrace.\n" + error.stack);
@@ -257,7 +266,6 @@ function getDeadlineCb(error, d) {
 
 function getHandicapCb(error, h) {
     if (!error) {
-        console.log(h.toString(10));
         handicaps.push(h.toString(10));
     } else {
         console.log("Something went wrong while loading the handicaps, see stacktrace.\n" + error.stack);

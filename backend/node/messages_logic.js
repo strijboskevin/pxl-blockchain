@@ -2,10 +2,12 @@ var genesis = require('./messages_load.js');
 
 var messages = [];
 var messagesByUser = {};
+var doneCb;
 
 module.exports = {
 
-    load: function () {
+    load: function (cb) {
+        doneCb = cb;
         genesis.set();
         genesis.init(function (mssgs) {
             messages = mssgs;
@@ -69,6 +71,8 @@ function set() {
             messagesByUser[value.recipient] = arr;
         }
     });
+
+    doneCb();
 }
 
 function addMessageCb(error) {

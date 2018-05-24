@@ -1,0 +1,45 @@
+<app-navbar-component></app-navbar-component>
+<div class="row justify-content-center mt-5">
+  <div class="col-8">
+    <form #searchForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="start">Start</label>
+        <input type="text" class="form-control" id="start" name="start" required
+               pattern='(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})' [(ngModel)]="start" #startel="ngModel">
+        <div [hidden]="startel.valid || startel.pristine"
+             class="alert alert-danger">
+          Start is vereist. YYYY-dd-mmTHH:mm:ss
+        </div>
+        <label for="end">Einde</label>
+        <input type="text" class="form-control" id="end" name="end" required
+               pattern='(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})' [(ngModel)]="end" #endel="ngModel">
+        <div [hidden]="endel.valid || endel.pristine"
+             class="alert alert-danger">
+          Einde is vereist. YYYY-dd-mmTHH:mm:ss
+        </div>
+        <label for="search">Zoekwaarde</label>
+        <input type="text" class="form-control" id="search" name="search" [(ngModel)]="search" #searchel="ngModel">
+        <button type="submit" class="btn btn-outline-success mt-2" [disabled]="!searchForm.form.valid">Zoeken
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="final.length === 0">
+      <div class="alert alert-danger">
+        Geen logs gevonden!
+      </div>
+    </div>
+
+    <div *ngFor="let log of final">
+      <p class="d-inline">{{log.timestamp | date: 'yyyy-MM-dd - HH:mm:ss'}}:</p>
+      <p class="lead d-inline ml-5">{{log.log}}</p>
+    </div>
+  </div>
+</div>
+<ng-template #noLogs>
+  <div class="col-8 offset-2 mt-5">
+    <p class="lead">
+      Loading...
+    </p>
+  </div>
+</ng-template>

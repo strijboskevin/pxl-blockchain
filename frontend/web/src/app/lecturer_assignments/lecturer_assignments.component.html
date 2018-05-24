@@ -109,10 +109,6 @@
                    [routerLink]="['/assignment/', assignment.name]">
                   {{assignment.name}} aangemaakt op {{assignment.created | date: 'yyyy-MM-dd'}} </p>
                 <button class="btn btn-outline-success float-right" (click)="start(assignment.name)">Start</button>
-                <button class="btn btn-outline-danger float-right mr-2" (click)="reset(assignment.name)">reset
-                </button>
-                <button class="btn btn-outline-warning float-right mr-2" (click)="done(assignment.name)">Klaar
-                </button>
               </div>
             </div>
           </div>

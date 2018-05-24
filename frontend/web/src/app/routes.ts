@@ -10,6 +10,9 @@ import {ArchiveComponent} from './archive/archive.component';
 import {OverviewComponent} from './overview/overview.component';
 import {MessagesComponent} from './messages/messages.component';
 import {RedirectComponent} from './redirect/redirect.component';
+import {LoadingComponent} from './loading/loading.component';
+import {LogsComponent} from './logs/logs.component';
+import {SearchComponent} from './search/search.component';
 
 export const routes: Routes = [
   {path: '', component: LoginComponent},
@@ -26,5 +29,9 @@ export const routes: Routes = [
   {path: 'overview', component: OverviewComponent},
   {path: 'messages/:name', component: MessagesComponent},
   {path: 'messages', component: MessagesComponent},
-  {path: 'redirect', component: RedirectComponent}
+  {path: 'redirect', component: RedirectComponent},
+  {path: 'loading/:path', component: LoadingComponent},
+  {path: 'loading/:path/:param', component: LoadingComponent},
+  {path: 'logs', component: LogsComponent},
+  {path: 'search', component: SearchComponent}
 ]

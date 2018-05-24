@@ -38,7 +38,7 @@ module.exports = {
 
 function getLengthCb(error, l) {
     if (!error) {
-        length = l;
+        length = l.toString(10);
         getLogs();
     } else {
         console.log("Something went wrong while loading the length of the logs array, see stacktrace.\n" + error.stack);
@@ -48,9 +48,9 @@ function getLengthCb(error, l) {
 function getLogCb(error, arr) {
     if (!error) {
         logs.push({timestamp: arr[0], log: arr[1]});
-        loaded++;
+        ++loaded;
 
-        if (loaded === length) {
+        if (loaded == length) {
             console.log("Logs loaded.");
             logsCb(logs);
         }

@@ -30,37 +30,34 @@ export class NavbarComponent implements OnInit {
   constructor(public nav: NavbarService,
               public auth: AuthService,
               private assignmentService: AssignmentService,
-              private messageService: MessageService,
-              private timer: TimerService) {
+              private messageService: MessageService,) {
   }
 
   ngOnInit(): void {
-    if (this.timer.loaded) {
-      this.jobtitle = localStorage.getItem('jobtitle');
+    this.jobtitle = localStorage.getItem('jobtitle');
 
-      this.requests = this.assignmentService.getRequests(localStorage.getItem('username'));
-      this.assignments = this.assignmentService.getAssignmentsByUserByStatus(1, localStorage.getItem('username'));
+    this.requests = this.assignmentService.getRequests(localStorage.getItem('username'));
+    this.assignments = this.assignmentService.getAssignmentsByUserByStatus(1, localStorage.getItem('username'));
 
-      this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username')).subscribe(data => {
-        const dummy = data;
+    this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username')).subscribe(data => {
+      const dummy = data;
 
-        dummy.forEach(item => {
-          this.assignmentsByLecturer.push(new Assignment(item.name, item.description, item.lecturer, item.domain, item.assignee, item.request, item.time, item.status, item.maximum, item.created, item.performed, item.deadline, item.handicap, ''));
-        });
-
-        this.countRequests();
+      dummy.forEach(item => {
+        this.assignmentsByLecturer.push(new Assignment(item.name, item.description, item.lecturer, item.domain, item.assignee, item.request, item.time, item.status, item.maximum, item.created, item.performed, item.deadline, item.handicap, ''));
       });
 
-      this.messageService.getMessagesByUser(localStorage.getItem('username')).subscribe(data => {
-          this.messages = data;
-        },
-        err => {
-          console.log(err);
-        },
-        () => {
-          this.countUnread();
-        });
-    }
+      this.countRequests();
+    });
+
+    this.messageService.getMessagesByUser(localStorage.getItem('username')).subscribe(data => {
+        this.messages = data;
+      },
+      err => {
+        console.log(err);
+      },
+      () => {
+        this.countUnread();
+      });
   }
 
   private countRequests() {

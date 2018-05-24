@@ -15,6 +15,7 @@ import {tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NavbarService} from '../services/navbar.service';
 import {TimerService} from '../services/timer.service';
+import {LoginService} from '../services/login.service';
 
 @Component({
   selector: 'app-home',
@@ -27,17 +28,21 @@ export class HomeComponent implements OnInit {
   constructor(private assignmentService: AssignmentService,
               private router: Router,
               public nav: NavbarService,
-              private timer: TimerService) {
+              private login: LoginService) {
   }
 
   ngOnInit() {
     this.nav.show();
     this.nav.element = 'home';
 
-    if (localStorage.getItem('username') !== null && this.timer.loaded) {
-      this.assignments = this.assignmentService.getOpenAssignments(localStorage.getItem('username'));
+    if (this.login.loggedIn) {
+      if (localStorage.getItem('username') !== null) {
+        this.assignments = this.assignmentService.getOpenAssignments(localStorage.getItem('username'));
+      } else {
+        this.router.navigate(['']);
+      }
     } else {
-      this.router.navigate(['']);
+      this.router.navigate(['loading', 'home']);
     }
   }
 }

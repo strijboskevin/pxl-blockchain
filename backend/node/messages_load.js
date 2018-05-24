@@ -38,7 +38,7 @@ module.exports = {
 
 function getLengthCb(error, l) {
     if (!error) {
-        length = l;
+        length = l.toString(10);
         getMessages();
     } else {
         console.log("Something went wrong while loading the length of the messages array, see stacktrace.\n" + error.stack);
@@ -48,9 +48,9 @@ function getLengthCb(error, l) {
 function getMessageCb(error, arr) {
     if (!error) {
         messages.push({sender: arr[0], recipient: arr[1], timestamp: arr[2], text: arr[3], read: arr[4]});
-        loaded++;
+        ++loaded;
 
-        if (loaded === length) {
+        if (loaded == length) {
             console.log("Messages loaded.");
             messagesCb(messages);
         }
@@ -64,5 +64,9 @@ function getMessages() {
 
     for (index=0; index < length ;index++) {
         contract.getMessage(index, getMessageCb);
+    }
+
+    if (length == 0) {
+        messagesCb(messages);
     }
 }

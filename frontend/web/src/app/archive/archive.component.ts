@@ -1,12 +1,6 @@
-import {Component, OnInit, OnDestroy, HostListener} from '@angular/core';
-import {AuthService} from '../services/auth.service';
+import {Component, OnInit} from '@angular/core';
 import {AssignmentService} from '../services/assignment.service';
-import {Assignment} from '../models/Assignment';
-import {MeService} from '../services/me.service';
 import {Observable} from 'rxjs/Observable';
-import {Subscription} from 'rxjs/Subscription';
-import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
-import {tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {NavbarService} from '../services/navbar.service';
 
@@ -28,12 +22,12 @@ export class ArchiveComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.jobtitle = 'Personeel';
+    this.jobtitle = localStorage.getItem('jobtitle');
     this.nav.show();
     this.nav.element = 'archive';
     if (localStorage.getItem('username') !== null) {
       this.assignments = this.assignmentService.getAssignments();
-    } else if (localStorage.getItem('loggedin') == null) {
+    } else {
       this.router.navigate(['']);
     }
   }

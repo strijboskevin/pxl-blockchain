@@ -1,0 +1,25 @@
+<app-navbar-component></app-navbar-component>
+<div class="row justify-content-center mt-5">
+  <div class="col-8">
+    <form #searchForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="search">Zoekterm</label>
+        <input type="text" class="form-control" id="search" name="search" required [(ngModel)]="search" #searchel="ngModel">
+        <div [hidden]="searchel.valid || searchel.pristine"
+             class="alert alert-danger">
+          Een zoekterm is vereist.
+        </div>
+        <button type="submit" class="btn btn-outline-success mt-2" [disabled]="!searchForm.form.valid">Zoeken
+        </button>
+      </div>
+    </form>
+    <div *ngIf="final.length === 0">
+      <div class="alert alert-danger">
+        Geen gebruikers gevonden!
+      </div>
+    </div>
+    <div *ngFor="let user of final">
+      <p class="lead" [routerLink]="['/overview', 'user']">{{user}}</p>
+    </div>
+  </div>
+</div>

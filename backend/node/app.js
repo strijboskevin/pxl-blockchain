@@ -6,9 +6,11 @@ var bodyParser = require('body-parser');
 var qs = require('querystring');
 var cors = require('cors');
 
-logic.load();
-messages_logic.load();
-logs_logic.load();
+logic.load(function () {
+  messages_logic.load(function () {
+    logs_logic.load();
+  });
+});
 
 var app = express();
 
@@ -17,7 +19,7 @@ app.use(cors());
 
 app.get('/balances/:user', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if ((mail === undefined || mail != request.params.user) && jobtitle != 'Personeel') {
+    if ((mail === undefined || mail != request.params.user) && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       logic.getBalance(request.params.user, function (result) {
@@ -29,7 +31,7 @@ app.get('/balances/:user', function (request, response) {
 
 app.get('/messages/:user', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if ((mail === undefined || mail != request.params.user) && jobtitle != 'Personeel') {
+    if ((mail === undefined || mail != request.params.user) && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(messages_logic.getMessagesByUser(request.params.user));
@@ -49,7 +51,7 @@ app.get('/assignments', function (request, response) {
 
 app.get('/logs', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (jobitle !== 'Personeel') {
+    if (!jobtitle.includes('Personeel')) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logs_logic.getLogs());
@@ -59,7 +61,7 @@ app.get('/logs', function (request, response) {
 
 app.get('/logs/:start/:end', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (jobitle !== 'Personeel') {
+    if (!jobtitle.includes('Personeel')) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logs_logic.getLogsBetween(request.params.start, request.params.end));
@@ -89,7 +91,7 @@ app.get('/assignments/time/:time', function (request, response) {
 
 app.get('/request/student/:student', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if ((mail === undefined || mail !== request.params.student) && jobtitle !== 'Personeel') {
+    if ((mail === undefined || mail !== request.params.student) && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getRequestsByStudent(request.params.student));
@@ -179,7 +181,7 @@ app.get('/domains/:domain/index', function (request, response) {
 
 app.get('/assignments/lecturer/:lecturer', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.lecturer && jobtitle !== 'Personeel') {
+    if (mail !== request.params.lecturer && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignmentsByLecturer(request.params.lecturer));
@@ -189,7 +191,7 @@ app.get('/assignments/lecturer/:lecturer', function (request, response) {
 
 app.get('/assignments/assignee/:assignee', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.assignee && jobtitle !== 'Personeel') {
+    if (mail !== request.params.assignee && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignmentsByAssignee(request.params.assignee));
@@ -219,7 +221,7 @@ app.get('/assignments/domain/:domain', function (request, response) {
 
 app.get('/assignments/assignee/:assignee/domain/:domain', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.assignee && jobtitle !== 'Personeel') {
+    if (mail !== request.params.assignee && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignmentsByAssigneeByDomain(request.params.assignee, request.params.domain));
@@ -229,7 +231,7 @@ app.get('/assignments/assignee/:assignee/domain/:domain', function (request, res
 
 app.get('/assignments/assignee/:assignee/status/:status', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.assignee && jobtitle !== 'Personeel') {
+    if (mail !== request.params.assignee && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignmentsByAssigneeByStatus(request.params.assignee, request.params.status));
@@ -239,7 +241,7 @@ app.get('/assignments/assignee/:assignee/status/:status', function (request, res
 
 app.get('/assignments/assignee/:assignee/status/:status/domain/:domain', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.assignee && jobtitle !== 'Personeel') {
+    if (mail !== request.params.assignee && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignmentsByAssigneeBystatusByDomain(request.params.assignee, request.params.status, request.params.domain));
@@ -249,7 +251,7 @@ app.get('/assignments/assignee/:assignee/status/:status/domain/:domain', functio
 
 app.get('/assignments/lecturer/:lecturer/status/:status', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.lecturer && jobtitle !== 'Personeel') {
+    if (mail !== request.params.lecturer && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignmentsBylecturerBystatus(request.params.lecturer, request.params.status));
@@ -259,7 +261,7 @@ app.get('/assignments/lecturer/:lecturer/status/:status', function (request, res
 
 app.get('/assignments/lecturer/:lecturer/domain/:domain', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.lecturer && jobtitle !== 'Personeel') {
+    if (mail !== request.params.lecturer && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignmentsBylecturerByDomain(request.params.lecturer, request.params.domain));
@@ -279,7 +281,7 @@ app.get('/assignments/search/:needle', function (request, response) {
 
 app.get('/assignments/open/:student', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.student && jobtitle !== 'Personeel') {
+    if (mail !== request.params.student && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getOpenAssignments(request.params.student));
@@ -289,7 +291,7 @@ app.get('/assignments/open/:student', function (request, response) {
 
 app.get('/assignments/lecturer/:lecturer/status/:status/domain/:domain', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.lecturer && jobtitle !== 'Personeel') {
+    if (mail !== request.params.lecturer && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.getAssignmentsBylecturerBystatusByDomain(request.params.lecturer, request.params.status, request.params.domain));
@@ -302,7 +304,7 @@ app.get('/assignments/lecturer/:lecturer/status/:status/domain/:domain', functio
 
 app.post('/balances', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.body.user && jobtitle !== 'Personeel') {
+    if (mail !== request.body.user && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.setBalance(request.body.user, request.body.amount));
@@ -312,37 +314,43 @@ app.post('/balances', function (request, response) {
 
 app.post('/assignments', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (jobtitle !== 'Personeel') {
+    if (jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
-      response.status(200).json(logic.addAssignment(request.body));
+      logs_logic.addLog(new Date().getTime(), mail + ' heeft een opdracht toegevoegd.', function () {
+        response.status(200).json(logic.addAssignment(request.body));
+      });
     }
   });
 });
 
 app.post('/requests', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.body.user && jobtitle !== 'Personeel') {
+    if (mail !== request.body.user && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
-      response.status(200).json(logic.addRequest(request.body.assignment, request.body.user));
+      logs_logic.addLog(new Date().getTime(), `${request.body.user} heeft opdracht "${request.body.assignment}" aangevraagd.`, function () {
+        response.status(200).json(logic.addRequest(request.body.assignment, request.body.user));
+      });
     }
   });
 });
 
 app.post('/messages', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.body.sender && jobtitle !== 'Personeel') {
+    if (mail !== request.body.sender && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
-      response.status(200).json(messages_logic.addMessage(request.body.sender, request.body.recipient, request.body.timestamp, request.body.text, request.body.read));
+      logs_logic.addLog(new Date().getTime(), request.body.sender + ' heeft een bericht gestuurd naar ' + request.body.recipient + '.', function () {
+        response.status(200).json(messages_logic.addMessage(request.body.sender, request.body.recipient, request.body.timestamp, request.body.text, request.body.read));
+      });
     }
   });
 });
 
 app.post('/domains', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (jobtitle !== 'Personeel') {
+    if (jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.setDomain(request.body.domain));
@@ -352,10 +360,13 @@ app.post('/domains', function (request, response) {
 
 app.post('/assignments/reset/:name', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (jobtitle !== 'Personeel') {
+    if (jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
-      response.status(200).json(logic.reset(request.params.name));
+      logs_logic.addLog(new Date().getTime(), mail + ' heeft opdracht met naam "' + request.params.name + '" gereset.', function () {
+        ;
+        response.status(200).json(logic.reset(request.params.name));
+      });
     }
   });
 });
@@ -365,20 +376,24 @@ app.post('/assignments/reset/:name', function (request, response) {
 
 app.put('/assignments/:name/assignee/:assignee', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.assignee && jobtitle !== 'Personeel') {
+    if (mail !== request.params.assignee && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
-      response.status(200).json(logic.changeAssignee(request.params.name, request.params.assignee));
+      logs_logic.addLog(new Date().getTime(), `${mail} + heeft gebruiker met naam "${request.params.assignee}" toegekend aan opdracht met als naam "${request.params.name}".`, function () {
+        response.status(200).json(logic.changeAssignee(request.params.name, request.params.assignee));
+      });
     }
   });
 });
 
 app.put('/assignments/:name/status/:status', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (jobtitle !== 'Personeel') {
+    if (jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
-      response.status(200).json(logic.changeStatus(request.params.name, request.params.status));
+      logs_logic.addLog(new Date().getTime(), `${mail} heeft de status van opdracht met naam "${request.params.name}" veranderd.`, function () {
+        response.status(200).json(logic.changeStatus(request.params.name, request.params.status));
+      });
     }
   });
 });
@@ -398,17 +413,19 @@ app.put('/messages/:sender/:timestamp/:read', function (request, response) {
 
 app.delete('/request/:assignment/:user', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (mail !== request.params.user && jobtitle !== 'Personeel') {
+    if (mail !== request.params.user && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
-      response.status(200).json(logic.deleteRequest(request.params.assignment, request.params.user));
+      logs_logic.addLog(new Date().getTime(), `${mail} heeft de aanvraag voor opdracht met als naam "${request.params.assignment}" verwijderd.`, function () {
+        response.status(200).json(logic.deleteRequest(request.params.assignment, request.params.user));
+      });
     }
   });
 });
 
 app.delete('/domains/:domain', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (jobtitle !== 'Personeel') {
+    if (jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       response.status(200).json(logic.deleteDomain(request.params.domain));

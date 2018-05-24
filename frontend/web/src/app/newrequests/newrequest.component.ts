@@ -7,6 +7,7 @@ import {MeService} from '../services/me.service';
 import {Router} from '@angular/router';
 import {NavbarService} from '../services/navbar.service';
 import {TimerService} from '../services/timer.service';
+import {LoginService} from '../services/login.service';
 
 @Component({
   selector: 'app-newrequest',
@@ -27,23 +28,27 @@ export class NewrequestComponent implements OnInit {
               private assignmentService: AssignmentService,
               private router: Router,
               public nav: NavbarService,
-              private timer: TimerService) {
+              private login: LoginService) {
   }
 
   ngOnInit() {
     this.username = localStorage.getItem('username');
     this.nav.show();
     this.nav.element = 'newrequests';
-    if (localStorage.getItem('username') !== null && this.timer.loaded) {
-      this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username')).subscribe(data => {
-        const dummy = data;
+    if (localStorage.getItem('username') !== null) {
+      if (this.login.loggedIn) {
+        this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username')).subscribe(data => {
+          const dummy = data;
 
-        dummy.forEach(item => {
-          this.assignments.push(new Assignment(item.name, item.description, item.lecturer, item.domain, item.assignee, item.request, item.time, item.status, item.maximum, item.created, item.performed, item.deadline, item.handicap, ''));
+          dummy.forEach(item => {
+            this.assignments.push(new Assignment(item.name, item.description, item.lecturer, item.domain, item.assignee, item.request, item.time, item.status, item.maximum, item.created, item.performed, item.deadline, item.handicap, ''));
+          });
+          this.assignments = data;
+          this.setRequests();
         });
-        this.assignments = data;
-        this.setRequests();
-      });
+      } else {
+        this.router.navigate(['loading', 'newrequests']);
+      }
     } else {
       this.router.navigate(['']);
     }

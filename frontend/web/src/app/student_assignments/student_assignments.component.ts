@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NavbarService} from '../services/navbar.service';
 import {Observable} from 'rxjs/Observable';
 import {TimerService} from '../services/timer.service';
+import {LoginService} from '../services/login.service';
 
 @Component({
   selector: 'app-student-assignment',
@@ -24,13 +25,13 @@ export class StudentAssignmentsComponent implements OnInit {
               private router: Router,
               public nav: NavbarService,
               private route: ActivatedRoute,
-              private timer: TimerService) {
+              private login: LoginService) {
   }
 
   ngOnInit() {
     this.jobtitle = localStorage.getItem('jobtitle');
 
-    if (this.jobtitle === 'Personeel') {
+    if (!this.jobtitle.includes('Student')) {
       this.username = this.route.snapshot.params['name'];
     } else {
       this.username = localStorage.getItem('username');
@@ -38,8 +39,17 @@ export class StudentAssignmentsComponent implements OnInit {
 
     this.nav.show();
     this.nav.element = 'studentassignments';
-    if (localStorage.getItem('username') !== null && this.timer.loaded) {
-      this.assignments = this.assignmentService.getAssignmentsByAssignee(this.username);
+    if (localStorage.getItem('username') !== null) {
+      if (this.login.loggedIn) {
+        this.assignments = this.assignmentService.getAssignmentsByAssignee(this.username);
+      } else {
+        if (!this.jobtitle.includes('Student')) {
+          this.router.navigate(['loading', 'myassignments/' + this.username]);
+        } else {
+          this.router.navigate(['loading', 'myassignments']);
+
+        }
+      }
     } else {
       this.router.navigate(['']);
     }

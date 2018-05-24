@@ -14,6 +14,7 @@ var assignmentsByAssignee = {};
 var domains = ["Innovatie", "Student engagement", "Seminaries", "Internationalisering"];
 
 var balancesCb;
+var doneCb
 
 module.exports = {
     examine: function (request, cb) {
@@ -26,7 +27,7 @@ module.exports = {
                 'Authorization': request.get('Authorization')
             }
         };
-        
+
         var req = http.get(options, res => {
             res.on('data', chunk => {
                 chunk = JSON.parse(chunk);
@@ -37,11 +38,13 @@ module.exports = {
           });
     },
 
-    load: function () {
+    load: function (cb) {
+        doneCb = cb;
         genesis.set();
         genesis.init(function (assigns) {
             assignments = assigns;
             set();
+            doneCb();
         });
     },
 
@@ -89,7 +92,6 @@ module.exports = {
     },
 
     getBalance: function (name, callback) {
-        genesis.set();
         balancesCb = callback;
         genesis.getContract().getBalance(name, getBalanceCb);
     },
@@ -375,7 +377,6 @@ module.exports = {
     },
 
     setBalance: function (name, amount) {
-        genesis.set();
         genesis.getContract().setBalance(name, amount, setBalanceCb);
     },
 
@@ -385,7 +386,6 @@ module.exports = {
 
             var newHash = hash.sha256().update(assignment._name + "_" + assignment._description + "_" + assignment._lecturer + "_" + assignment._time + "_" + assignment._deadline).digest("hex");
 
-            genesis.set();
             genesis.getContract().setName(assignment._name, pushCb);
             genesis.getContract().setDescription(assignment._description, pushCb);
             genesis.getContract().setLecturer(assignment._lecturer, pushCb);
@@ -400,7 +400,6 @@ module.exports = {
             genesis.getContract().setDeadline(assignment._deadline, pushCb);
             genesis.getContract().setHandicap(parseInt(assignment._handicap, 10), pushCb);
             genesis.getContract().setHash(newHash);
-            console.log("handicap: " + parseInt(Math.floor(assignment._handicap), 10));
             nAssignment["name"] = assignment._name;
             nAssignment["description"] = assignment._description;
             nAssignment["lecturer"] = assignment._lecturer;
@@ -565,7 +564,7 @@ function setAssignmentsByLecturer() {
             assignmentsByLecturer[value.lecturer] = arr;
         }
     });
-}
+} 
 
 function setAssignmentsByAssignee() {
     assignments.forEach(function (value) {
@@ -707,8 +706,8 @@ function checkIfClosed(index) {
     if (length == assignment.maximum) {
         assignments[index].request = "";
         assignments[index].status = 1;
-        genesis.getContract().changeStatus(assignment.name, 1);
-        genesis.getContract().changeRequest(assignment.name, "");
+        genesis.getContract().changeStatus(index, 1);
+        genesis.getContract().changeRequest(index, "");
         set();
     }
 }
@@ -717,20 +716,13 @@ function addHours(assignees, deadline, handicap, hours) {
     var split = assignees.split(',');
     var x = 0;
 
-    console.log("requests: " + assignees);
-    console.log("split: " + split);
-
     for (x = 0; x < split.length; x++) {
         if (split[x] != '') {
             var current = new Date().getTime();
 
             if (current > parseInt(deadline, 10)) {
-                console.log("result: " + parseInt(hours, 10) * parseInt(handicap, 10) / 100);
-                console.log(Math.floor(parseInt(hours, 10) * parseInt(handicap, 10) / 100));
                 module.exports.setBalance(split[x], Math.floor(parseInt(hours, 10) * parseInt(handicap, 10) / 100));
             } else {
-                console.log("before deadline");
-                console.log("user: " + split[x] + ", hours: " + hours);
                 module.exports.setBalance(split[x], hours);
             }
         }

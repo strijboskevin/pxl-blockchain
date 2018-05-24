@@ -5,13 +5,15 @@ import {MeService} from './me.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {InterceptorSkipHeader} from '../interceptors/AuthInterceptor';
 import {Observable} from 'rxjs/Observable';
+import {LoginService} from './login.service';
 
 @Injectable()
 export class AuthService {
 
   constructor(private router: Router,
               private meService: MeService,
-              private http: HttpClient) {
+              private http: HttpClient,
+              private loginService: LoginService) {
   }
 
   login(code) {
@@ -23,6 +25,8 @@ export class AuthService {
       this.meService.getMe().subscribe(me => {
         localStorage.setItem('username', me['mail']);
         localStorage.setItem('jobtitle', me['jobTitle']);
+        console.log(me);
+        this.loginService.loggedIn = true;
         this.router.navigate(['/home']);
       });
     });
