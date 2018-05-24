@@ -551,6 +551,40 @@ module.exports = {
         } else {
             throw new Error("Assignment not found.");
         }
+    },
+
+    deleteAssignee: function (assignment, user) {
+        var index = getIndex(assignments, assignment);
+
+        if (index > -1) {
+            var assignee = assignments[index].assignee;
+            if (assignee.indexOf(', ' + user) > -1) {
+                assignee = assignee.replace(', ' + user, '');
+                genesis.getContract().changeAssignee(index, assignee, deleteAssigneeCb);
+                assignments[index].assignee = assignee;
+                assignments[index].status = 0;
+                genesis.getContract.changeStatus(index, 0);                                
+                set();
+            } else if (assignee.indexOf(user + ', ') > -1) {
+                assignee = assignee.replace(user + ', ', '');
+                genesis.getContract().changeAssignee(index, assignee, deleteAssigneeCb);
+                assignments[index].assignee = assignee;
+                assignments[index].status = 0;
+                genesis.getContract.changeStatus(index, 0);                                
+                set();
+            } else if (assignee.indexOf(user) > -1) {
+                assignee = assignee.replace(user, '');
+                genesis.getContract().changeAssignee(index, assignee, deleteAssigneeCb);
+                assignments[index].assignee = assignee;
+                assignments[index].status = 0;
+                genesis.getContract().changeStatus(index, 0);                
+                set();
+            } else {
+                throw new Error("Assignee not found.");
+            }
+        } else {
+            throw new Error("Assignment not found.");
+        }
     }
 }
 
@@ -642,6 +676,14 @@ function set() {
 function changeAssigneeCb(error) {
     if (!error) {
         console.log("Assignee changed.");
+    } else {
+        console.log("Something went wrong, see stacktrace.\n" + error.stack);
+    }
+}
+
+function deleteAssigneeCb(error) {
+    if (!error) {
+        console.log("Assignee deleted.");
     } else {
         console.log("Something went wrong, see stacktrace.\n" + error.stack);
     }

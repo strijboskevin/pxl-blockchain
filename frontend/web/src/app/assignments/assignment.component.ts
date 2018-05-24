@@ -17,6 +17,7 @@ export class AssignmentComponent implements OnInit {
   canRequest = false;
   ready = false;
   jobtitle: string;
+  username: string;
 
   constructor(private service: AssignmentService,
               private route: ActivatedRoute,
@@ -27,6 +28,7 @@ export class AssignmentComponent implements OnInit {
 
   ngOnInit() {
     this.jobtitle = localStorage.getItem('jobtitle');
+    this.username = localStorage.getItem('username');
     this.nav.show();
     this.nav.element = 'assignment';
     const name = this.route.snapshot.params['name'];
@@ -67,5 +69,10 @@ export class AssignmentComponent implements OnInit {
 
         this.ready = true;
       });
+  }
+
+  deleteAssignee(name, assignee) {
+    this.service.deleteAssignment(name, assignee).subscribe();
+    window.location.reload();
   }
 }

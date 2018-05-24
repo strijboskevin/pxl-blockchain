@@ -18,6 +18,11 @@ export class AssignmentService implements OnInit {
     return this.http.get(this.BASE_API_URL + '/assignments/open/' + user).catch(this.onError);
   }
 
+  deleteAssignment(name: string, assignee: string) {
+    return this.http.delete(this.BASE_API_URL + '/assignments/' + name + '/' + assignee).catch(this.onError);
+
+  }
+
   getAssignments() {
     return this.http.get(this.BASE_API_URL + '/assignments').catch(this.onError);
   }

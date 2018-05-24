@@ -50,18 +50,24 @@
       Klik op de knop "aanvragen" om deze opdracht aan te vragen bij {{assignment.lecturer}}.
     </span>
   </div>
-  <div class="col-8 mt-1 offset-2" *ngIf="jobtitle == 'Personeel'">
-    <div *ngIf="assignment.request != ''">
-    <span class="alert alert-info d-block">
+  <div *ngIf="username === assignment.lecturer">
+    <div class="col-8 mt-1 offset-2">
+      <div *ngIf="assignment.request != ''">
+    <span class="alert alert-secondary d-block">
       Aanvragen: {{assignment.request}}
     </span>
+      </div>
     </div>
   </div>
-  <div class="col-8 mt-1 offset-2" *ngIf="jobtitle == 'Personeel'">
-    <div *ngIf="assignment.assignee != ''">
-    <span class="alert alert-info d-block">
-      Deelnemers: {{assignment.assignee}}
+  <div *ngIf="username === assignment.lecturer">
+    <div class="col-8 mt-1 offset-2">
+      <div *ngIf="assignment.assignee != ''">
+    <span class="alert alert-secondary d-block">
+      <p class="d-inline"> Deelnemers: {{assignment.assignee}}>
+      <span (click)="deleteAssignee(assignment.name, assignment.assignee)" style="cursor: pointer;"
+            class="alert alert-danger mt-2 mb-2">X</span>
+      </p>
     </span>
+      </div>
     </div>
   </div>
-</div>

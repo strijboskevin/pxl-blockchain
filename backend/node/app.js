@@ -423,6 +423,18 @@ app.delete('/request/:assignment/:user', function (request, response) {
   });
 });
 
+app.delete('/assignments/:assignment/:user', function (request, response) {
+  logic.examine(request, function (mail, jobtitle) {
+    if (jobtitle.indexOf('Personeel') === -1) {
+      response.sendStatus(401);
+    } else {
+      logs_logic.addLog(new Date().getTime(), `${mail} heeft deelnemer "${request.params.user} verwijderd voor opdracht met als naam "${request.params.assignment}" verwijderd.`, function () {
+        response.status(200).json(logic.deleteAssignee(request.params.assignment, request.params.user));
+      });
+    }
+  });
+});
+
 app.delete('/domains/:domain', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
     if (jobtitle.indexOf('Personeel') === -1) {
