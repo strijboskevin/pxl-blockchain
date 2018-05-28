@@ -4,18 +4,16 @@
     <form #searchForm="ngForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="start">Start</label>
-        <input type="text" class="form-control" id="start" name="start" required
-               pattern='(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})' [(ngModel)]="start" #startel="ngModel">
+        <input type="datetime-local" class="form-control" id="start" name="start" required [(ngModel)]="start" #startel="ngModel">
         <div [hidden]="startel.valid || startel.pristine"
              class="alert alert-danger">
-          Start is vereist. YYYY-dd-mmTHH:mm:ss
+          Start is vereist.
         </div>
         <label for="end">Einde</label>
-        <input type="text" class="form-control" id="end" name="end" required
-               pattern='(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})' [(ngModel)]="end" #endel="ngModel">
+        <input type="datetime-local" class="form-control" id="end" name="end" required [(ngModel)]="end" #endel="ngModel">
         <div [hidden]="endel.valid || endel.pristine"
              class="alert alert-danger">
-          Einde is vereist. YYYY-dd-mmTHH:mm:ss
+          Einde is vereist.
         </div>
         <label for="search">Zoekwaarde</label>
         <input type="text" class="form-control" id="search" name="search" [(ngModel)]="search" #searchel="ngModel">

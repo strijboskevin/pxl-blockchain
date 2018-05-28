@@ -19,6 +19,7 @@ export class StudentAssignmentsComponent implements OnInit {
   done: boolean;
   jobtitle: string;
   username: string;
+  date: string;
 
   constructor(private authService: AuthService,
               private assignmentService: AssignmentService,
@@ -30,6 +31,7 @@ export class StudentAssignmentsComponent implements OnInit {
 
   ngOnInit() {
     this.jobtitle = localStorage.getItem('jobtitle');
+    this.date = new Date().getTime().toString(10);
 
     if (!this.jobtitle.includes('Student')) {
       this.username = this.route.snapshot.params['name'];
@@ -58,4 +60,13 @@ export class StudentAssignmentsComponent implements OnInit {
   toggleBusy() { this.busy = !this.busy; }
 
   toggleDone() { this.done = !this.done; }
+
+  convert(num) {
+    return parseInt(num, 10);
+  }
+
+  deleteAssignee(name) {
+    this.assignmentService.deleteAssignment(name, localStorage.getItem('username')).subscribe();
+    window.location.reload();
+  }
 }

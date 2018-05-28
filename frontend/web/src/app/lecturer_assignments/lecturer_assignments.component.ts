@@ -44,7 +44,7 @@ export class LecturerAssignmentsComponent implements OnInit {
         this.username = localStorage.getItem('username');
         this.assignmentService.getDomains().subscribe(data => {
           this.domains = data;
-        })
+        });
         this.assignments = this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username'));
       } else {
         this.router.navigate(['loading', 'lecturerassignments']);
@@ -55,7 +55,14 @@ export class LecturerAssignmentsComponent implements OnInit {
   }
 
   onSubmit() {
-    const assignment = new Assignment(this.name, this.description, localStorage.getItem('username'), this.domain, '', '', this.time, 0, this.participants, new Date().getTime().toString(), '', new Date(this.deadline).getTime().toString(), this.handicap, '');
+    let assignment;
+
+    if (this.domain !== 'Seminaries') {
+      assignment = new Assignment(this.name, this.description, localStorage.getItem('username'), this.domain, '', '', this.time, 0, this.participants, new Date().getTime().toString(), '', new Date(this.deadline).getTime().toString(), this.handicap, '');
+    } else {
+      assignment = new Assignment(this.name, this.description, localStorage.getItem('username'), this.domain, '', '', this.time, 0, this.participants, new Date().getTime().toString(), '', new Date(this.deadline).getTime().toString(), '100', '');
+    }
+
     this.assignmentService.addAssignment(assignment).subscribe();
     window.location.reload();
   }
@@ -75,11 +82,19 @@ export class LecturerAssignmentsComponent implements OnInit {
     window.location.reload();
   }
 
-  toggleBusy() { this.busy = !this.busy; }
+  toggleBusy() {
+    this.busy = !this.busy;
+  }
 
-  toggleDone() { this.finished = !this.finished; }
+  toggleDone() {
+    this.finished = !this.finished;
+  }
 
-  toggleOpen() { this.open = !this.open; }
+  toggleOpen() {
+    this.open = !this.open;
+  }
 
-  toggleNew() { this.newAssignment = !this.newAssignment; }
+  toggleNew() {
+    this.newAssignment = !this.newAssignment;
+  }
 }

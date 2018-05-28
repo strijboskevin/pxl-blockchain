@@ -54,18 +54,20 @@
                 Aantal deelnemers is vereist
               </div>
               <label for="deadline">Deadline</label>
-              <input type="text" class="form-control" id="deadline" name="deadline" required pattern='(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})'
-                     [(ngModel)]="deadline" #deadl="ngModel">
+              <input type="datetime-local" class="form-control" id="deadline" name="deadline" required [(ngModel)]="deadline" #deadl="ngModel">
               <div [hidden]="deadl.valid || deadl.pristine"
                    class="alert alert-danger">
                 Deadline is vereist. YYYY-dd-mmTHH:mm:ss
               </div>
-              <label for="handicap">Handicap</label>
-              <input type="text" class="form-control" id="handicap" name="handicap" required pattern="^([0-9]|[1-9][0-9]|100)$"
-                     [(ngModel)]="handicap" #hand="ngModel">
-              <div [hidden]="hand.valid || hand.pristine"
-                   class="alert alert-danger">
-                Handicap is vereist? 0...100
+              <div *ngIf="domain !== 'Seminaries'">
+                <label for="handicap">Handicap</label>
+                <input type="text" class="form-control" id="handicap" name="handicap" required
+                       pattern="^([0-9]|[1-9][0-9]|100)$"
+                       [(ngModel)]="handicap" #hand="ngModel">
+                <div [hidden]="hand.valid || hand.pristine"
+                     class="alert alert-danger">
+                  Handicap is vereist? 0...100
+                </div>
               </div>
             </div>
 

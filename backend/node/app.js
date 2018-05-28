@@ -5,6 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var qs = require('querystring');
 var cors = require('cors');
+var mailer = require("nodemailer");
 
 logic.load(function () {
   messages_logic.load(function () {
@@ -380,6 +381,31 @@ app.put('/assignments/:name/assignee/:assignee', function (request, response) {
       response.sendStatus(401);
     } else {
       logs_logic.addLog(new Date().getTime(), `${mail} + heeft gebruiker met naam "${request.params.assignee}" toegekend aan opdracht met als naam "${request.params.name}".`, function () {
+        var transporter = mailer.createTransport({
+          service: "Gmail",
+          auth: {
+              user: "italentteampxl@gmail.com",
+              pass: "pxlpxlpxl"
+          }
+      });
+      
+      var mail = {
+          from: "I-Talent <italentteampxl@gmail.com>",
+          to: request.params.assignee,
+          subject: "Nieuwe opdracht",
+          text: 'Succes!',
+          html: "<b>Je bent aanvaard voor de opdracht met als naam "' + request.params.name + '"!</b>"
+      }
+      
+      transporter.sendMail(mail, function(error, response){
+          if(error){
+              console.log(error);
+          }else{
+              console.log("Message sent: " + response.message);
+          }
+      
+          smtpTransport.close();
+      });
         response.status(200).json(logic.changeAssignee(request.params.name, request.params.assignee));
       });
     }
@@ -425,7 +451,7 @@ app.delete('/request/:assignment/:user', function (request, response) {
 
 app.delete('/assignments/:assignment/:user', function (request, response) {
   logic.examine(request, function (mail, jobtitle) {
-    if (jobtitle.indexOf('Personeel') === -1) {
+    if (mail !== request.params.user && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
       logs_logic.addLog(new Date().getTime(), `${mail} heeft deelnemer "${request.params.user} verwijderd voor opdracht met als naam "${request.params.assignment}" verwijderd.`, function () {

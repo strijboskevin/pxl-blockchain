@@ -25,12 +25,17 @@
           <li class="list-group-item">
             Aantal deelnemers: {{assignment.maximum}}
           </li>
-          <li class="list-group-item">
+          <li class="list-group-item" *ngIf="assignment.domain !== 'Seminaries'">
             Deadline: {{assignment.deadline | date: 'yyyy-MM-dd - HH:mm:ss'}}
           </li>
+          <li class="list-group-item" *ngIf="assignment.domain === 'Seminaries'">
+            Datum: {{assignment.deadline | date: 'yyyy-MM-dd - HH:mm:ss'}}
+          </li>
+          <span *ngIf="assignment.domain !== 'Seminaries'">
           <li class="list-group-item">
             Handicap: {{assignment.handicap}}%
           </li>
+          </span>
         </ul>
       </div>
       <div class="col-8 float-right">
