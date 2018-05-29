@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../models/Assignment';
-import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AssignmentService} from '../services/assignment.service';
 import {NavbarService} from '../services/navbar.service';
-import {TimerService} from '../services/timer.service';
 import {LoginService} from '../services/login.service';
 
 @Component({
@@ -43,7 +42,7 @@ export class AssignmentComponent implements OnInit {
     }
   }
 
-  postRequest() {
+  private postRequest() {
     this.service.addRequest(this.assignment.name, localStorage.getItem('username')).subscribe();
     this.canRequest = false;
     this.router.navigate(['loading', 'myrequests']);
@@ -52,8 +51,7 @@ export class AssignmentComponent implements OnInit {
   private load() {
     const name = this.route.snapshot.params['name'];
     this.service.getAssignment(name).subscribe(data => {
-        const dummy = data;
-        this.assignment = new Assignment(dummy.name, dummy.description, dummy.lecturer, dummy.domain, dummy.assignee, dummy.request, dummy.time, dummy.status, dummy.maximum, dummy.created, dummy.performed, dummy.deadline, dummy.handicap, dummy.hash);
+        this.assignment = data;
       },
       err => {
         console.log(err);
@@ -71,7 +69,7 @@ export class AssignmentComponent implements OnInit {
       });
   }
 
-  deleteAssignee(name, assignee) {
+  private deleteAssignee(name, assignee) {
     this.service.deleteAssignment(name, assignee).subscribe();
     window.location.reload();
   }

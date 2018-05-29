@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../models/Assignment';
 import {AssignmentService} from '../services/assignment.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -49,7 +49,7 @@ export class MyrequestsComponent implements OnInit {
     }
   }
 
-  deleteRequest(assignment) {
+  private deleteRequest(assignment: Assignment) {
       this.assignmentService.deleteRequest(assignment, this.username).subscribe();
       window.location.reload();
   }

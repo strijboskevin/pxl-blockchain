@@ -5,9 +5,7 @@ import {Assignment} from '../models/Assignment';
 import {AssignmentService} from '../services/assignment.service';
 import {MessageService} from '../services/message.services';
 import {Observable} from 'rxjs/Observable';
-import {Request} from '../models/Request';
 import {Message} from '../models/Message';
-import {TimerService} from '../services/timer.service';
 
 @Component({
   selector: 'app-navbar-component',
@@ -43,7 +41,7 @@ export class NavbarComponent implements OnInit {
       const dummy = data;
 
       dummy.forEach(item => {
-        this.assignmentsByLecturer.push(new Assignment(item.name, item.description, item.lecturer, item.domain, item.assignee, item.request, item.time, item.status, item.maximum, item.created, item.performed, item.deadline, item.handicap, ''));
+        this.assignmentsByLecturer.push(item);
       });
 
       this.countRequests();
@@ -77,7 +75,7 @@ export class NavbarComponent implements OnInit {
     this.reqReady = true;
   }
 
-  logout() {
+  private logout() {
     this.auth.logout();
   }
 

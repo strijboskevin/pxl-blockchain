@@ -33,10 +33,10 @@ export class LogsComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  private onSubmit() {
     this.logs = [];
     this.final = [];
-    this.logsService.getBween(new Date(this.start).getTime(), new Date(this.end).getTime()).subscribe(data => {
+    this.logsService.getBween(new Date(this.start).getTime().toString(), new Date(this.end).getTime().toString()).subscribe(data => {
         this.logs = data;
       },
       err => {
@@ -47,7 +47,7 @@ export class LogsComponent implements OnInit {
       });
   }
 
-  performSearch() {
+  private performSearch() {
     let x;
 
     for (x = 0; x < this.logs.length; x++) {

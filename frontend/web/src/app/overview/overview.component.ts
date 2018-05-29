@@ -66,12 +66,12 @@ export class OverviewComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  private onSubmit() {
     this.assignmentService.addBalance(this.username, parseInt(this.change, 10)).subscribe();
     window.location.reload();
   }
 
-  onSubmitMessage() {
+  private onSubmitMessage() {
     this.messageService.addMessage(localStorage.getItem('username'), this.username, new Date().getTime().toString(), this.text, 'no').subscribe();
     window.location.reload();
   }

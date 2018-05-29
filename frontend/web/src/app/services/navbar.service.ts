@@ -7,11 +7,7 @@ export class NavbarService {
 
   constructor() { this.visible = false; }
 
-  hide() { this.visible = false; }
-
   show() { this.visible = true; }
-
-  toggle() { this.visible = !this.visible; }
 
   set element(value: string) { this._element = value; }
 

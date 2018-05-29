@@ -13,11 +13,11 @@ export class MessageService implements OnInit {
   ngOnInit(): void {
   }
 
-  getMessagesByUser(user: string) {
+  getMessagesByUser(user: string): Observable<any> {
     return this.http.get(this.BASE_API_URL + '/messages/' + user).catch(this.onError);
   }
 
-  addMessage(sender: string, recipient: string, timestamp: string, text: string, read: string) {
+  addMessage(sender: string, recipient: string, timestamp: string, text: string, read: string): Observable<any> {
     return this.http.post(this.BASE_API_URL + '/messages', JSON.stringify({
       sender: sender,
       recipient: recipient,
@@ -27,7 +27,7 @@ export class MessageService implements OnInit {
     })).catch(this.onError);
   }
 
-  changeRead(sender: string, timestamp: string, read: string) {
+  changeRead(sender: string, timestamp: string, read: string): Observable<any> {
     return this.http.put(this.BASE_API_URL + '/messages/' + sender + '/' + timestamp + '/' + read, null).catch(this.onError);
 
   }

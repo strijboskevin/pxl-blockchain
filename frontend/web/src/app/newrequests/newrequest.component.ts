@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, HostListener} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {AssignmentService} from '../services/assignment.service';
 import {Assignment} from '../models/Assignment';
@@ -6,7 +6,6 @@ import {Request} from '../models/Request';
 import {MeService} from '../services/me.service';
 import {Router} from '@angular/router';
 import {NavbarService} from '../services/navbar.service';
-import {TimerService} from '../services/timer.service';
 import {LoginService} from '../services/login.service';
 
 @Component({
@@ -38,10 +37,8 @@ export class NewrequestComponent implements OnInit {
     if (localStorage.getItem('username') !== null) {
       if (this.login.loggedIn) {
         this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username')).subscribe(data => {
-          const dummy = data;
-
-          dummy.forEach(item => {
-            this.assignments.push(new Assignment(item.name, item.description, item.lecturer, item.domain, item.assignee, item.request, item.time, item.status, item.maximum, item.created, item.performed, item.deadline, item.handicap, ''));
+          data.forEach(item => {
+            this.assignments.push(item);
           });
           this.assignments = data;
           this.setRequests();
@@ -54,19 +51,19 @@ export class NewrequestComponent implements OnInit {
     }
   }
 
-  deleteRequest(assignment, user) {
+  private deleteRequest(assignment, user) {
     this.assignmentService.deleteRequest(assignment, user).subscribe();
     window.location.reload();
   }
 
-  addAssignee(assignment, user) {
+  private addAssignee(assignment, user) {
     this.assignmentService.addAssignee(assignment, user).subscribe();
     window.location.reload();
   }
 
   private setRequests() {
     this.assignments.forEach(item => {
-      const dummy = new Assignment(item.name, item.description, item.lecturer, item.domain, item.assignee, item.request, item.time, item.status, item.maximum, item.created, item.performed, item.deadline, item.handicap, null);
+      const dummy: Assignment = item;
       if (localStorage.getItem('username').toLowerCase() === dummy.lecturer.toLowerCase()) {
         this.parseRequests(dummy.request, dummy.name);
         const split = dummy.assignee.split(',');

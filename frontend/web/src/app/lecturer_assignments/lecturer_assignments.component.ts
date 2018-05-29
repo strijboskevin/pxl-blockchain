@@ -54,7 +54,7 @@ export class LecturerAssignmentsComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  private onSubmit() {
     let assignment;
 
     if (this.domain !== 'Seminaries') {
@@ -67,34 +67,34 @@ export class LecturerAssignmentsComponent implements OnInit {
     window.location.reload();
   }
 
-  done(name: string) {
+  private done(name: string) {
     this.assignmentService.changeStatus(name, 2).subscribe();
     window.location.reload();
   }
 
-  start(name: string) {
+  private start(name: string) {
     this.assignmentService.changeStatus(name, 1).subscribe();
     window.location.reload();
   }
 
-  reset(name: string) {
+  private reset(name: string) {
     this.assignmentService.reset(name).subscribe();
     window.location.reload();
   }
 
-  toggleBusy() {
+  private toggleBusy() {
     this.busy = !this.busy;
   }
 
-  toggleDone() {
+  private toggleDone() {
     this.finished = !this.finished;
   }
 
-  toggleOpen() {
+  private toggleOpen() {
     this.open = !this.open;
   }
 
-  toggleNew() {
+  private toggleNew() {
     this.newAssignment = !this.newAssignment;
   }
 }

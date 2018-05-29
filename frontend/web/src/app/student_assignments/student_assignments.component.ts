@@ -1,11 +1,10 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {AssignmentService} from '../services/assignment.service';
 import {Assignment} from '../models/Assignment';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NavbarService} from '../services/navbar.service';
 import {Observable} from 'rxjs/Observable';
-import {TimerService} from '../services/timer.service';
 import {LoginService} from '../services/login.service';
 
 @Component({
@@ -57,15 +56,15 @@ export class StudentAssignmentsComponent implements OnInit {
     }
   }
 
-  toggleBusy() { this.busy = !this.busy; }
+  private toggleBusy() { this.busy = !this.busy; }
 
-  toggleDone() { this.done = !this.done; }
+  private toggleDone() { this.done = !this.done; }
 
-  convert(num) {
+  private convert(num: string) {
     return parseInt(num, 10);
   }
 
-  deleteAssignee(name) {
+  private deleteAssignee(name: string) {
     this.assignmentService.deleteAssignment(name, localStorage.getItem('username')).subscribe();
     window.location.reload();
   }

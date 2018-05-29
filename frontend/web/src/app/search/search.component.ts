@@ -36,7 +36,7 @@ export class SearchComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  private onSubmit() {
     let x;
 
     for (x = 0; x < this.assignments.length; x++) {
@@ -57,11 +57,9 @@ export class SearchComponent implements OnInit {
         }
       }
     }
-
-    console.log(this.final);
   }
 
-  private found(user) {
+  private found(user: string) {
     let x;
 
     for (x = 0; x < this.final.length; x++) {

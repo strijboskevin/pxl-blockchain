@@ -4,7 +4,6 @@ import {RouterModule} from '@angular/router';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
-import {HttpService} from './services/http.service';
 import {AuthService} from './services/auth.service';
 import {AssignmentService} from './services/assignment.service';
 import {routes} from './routes';
@@ -59,7 +58,6 @@ import {SearchComponent} from './search/search.component';
   providers: [{
     provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true
   },
-    HttpService,
     AuthService,
     MeService,
     AssignmentService,

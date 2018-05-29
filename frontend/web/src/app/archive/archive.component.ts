@@ -31,9 +31,9 @@ export class ArchiveComponent implements OnInit {
       this.router.navigate(['']);
     }
   }
-  toggleBusy() { this.busy = !this.busy; }
+  private toggleBusy() { this.busy = !this.busy; }
 
-  toggleDone() { this.finished = !this.finished; }
+  private toggleDone() { this.finished = !this.finished; }
 
-  toggleOpen() { this.open = !this.open; }
+  private toggleOpen() { this.open = !this.open; }
 }
