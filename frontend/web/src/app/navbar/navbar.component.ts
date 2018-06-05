@@ -13,6 +13,9 @@ import {Message} from '../models/Message';
   providers: [AssignmentService, MessageService]
 })
 
+/*
+A lot of the functionality in the class performs the notifications to provide the user with some extra info.
+ */
 export class NavbarComponent implements OnInit {
 
   jobtitle: string;
@@ -38,9 +41,7 @@ export class NavbarComponent implements OnInit {
     this.assignments = this.assignmentService.getAssignmentsByUserByStatus(1, localStorage.getItem('username'));
 
     this.assignmentService.getAssignmentsByLecturer(localStorage.getItem('username')).subscribe(data => {
-      const dummy = data;
-
-      dummy.forEach(item => {
+       data.forEach(item => {
         this.assignmentsByLecturer.push(item);
       });
 

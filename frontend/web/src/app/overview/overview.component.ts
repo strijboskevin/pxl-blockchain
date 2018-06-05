@@ -79,7 +79,7 @@ export class OverviewComponent implements OnInit {
   private load() {
     this.assignments = this.assignmentService.getAssignmentsByUserByStatus(2, this.username);
     this.domains = this.assignmentService.getDomains();
-    this.assignmentService.getDomains().subscribe(data => {
+    this.assignmentService.getDomains().subscribe(data => { // First load the domains
         this.domainsObj = data;
       },
       err => {
@@ -87,9 +87,9 @@ export class OverviewComponent implements OnInit {
       },
       () => {
         this.domainsLoaded = true;
-        this.setHours();
+        this.setHours(); // When the domains and the assignments are loaded, set the hours
       });
-    this.assignmentService.getAssignmentsByUserByStatus(2, this.username).subscribe(data => {
+    this.assignmentService.getAssignmentsByUserByStatus(2, this.username).subscribe(data => { // Secondly, load the done assignments by username
         this.assignmentsObj = data;
       },
       err => {
@@ -97,10 +97,9 @@ export class OverviewComponent implements OnInit {
       },
       () => {
         this.assignmentsLoaded = true;
-        this.setHours();
+        this.setHours(); // Now, set the hours
       });
-    this.assignmentService.getBalance(this.username).subscribe(data => {
-      console.log(data);
+    this.assignmentService.getBalance(this.username).subscribe(data => { // Lastly, set the balance
       this.balance = data;
       this.balanceLoaded = true;
     });
@@ -109,7 +108,7 @@ export class OverviewComponent implements OnInit {
   private setHours() {
     let x, y;
 
-    if (this.domainsLoaded && this.assignmentsLoaded) {
+    if (this.domainsLoaded && this.assignmentsLoaded) { // If both are loaded
       for (x = 0; x < this.domainsObj.length; x++) {
         for (y = 0; y < this.assignmentsObj.length; y++) {
           if (this.assignmentsObj[y].domain === this.domainsObj[x]) {

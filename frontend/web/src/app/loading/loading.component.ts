@@ -14,6 +14,7 @@ export class LoadingComponent implements OnInit {
               private login: LoginService) {}
 
   ngOnInit(): void {
+    // Wait 5 seconds before redirecting
     setTimeout( () => {
       this.login.loggedIn = true;
       if (this.route.snapshot.params['param'] === undefined) {

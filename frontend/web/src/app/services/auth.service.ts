@@ -15,16 +15,24 @@ export class AuthService {
               private loginService: LoginService) {
   }
 
+  /*
+  Request an access token and request the data.
+   */
   login(code: string) {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8').set(InterceptorSkipHeader, '');
-    this.http.post(Configs.heroku + 'https://login.microsoftonline.com/common/oauth2/v2.0/token', 'grant_type=authorization_code&code=' + code + '&client_id=' + Configs.appId + '&redirect_uri=http://localhost:4200/redirect&' + 'client_secret=lkcqTNT730}zyoVLOX45)|;', {headers: headers}).subscribe(data => {
+    this.http.post(Configs.heroku + 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+      'grant_type=authorization_code' +
+      '&code=' + code +
+      '&client_id=' + Configs.appId +
+      '&redirect_uri=http://localhost:4200/redirect&' +
+      'client_secret=lkcqTNT730}zyoVLOX45)|;',
+      {headers: headers}).subscribe(data => {
       localStorage.setItem('access', data['access_token']);
       localStorage.setItem('refresh', data['refresh_token']);
       this.meService.getMe().subscribe(me => {
         localStorage.setItem('username', me['mail']);
         localStorage.setItem('jobtitle', me['jobTitle']);
-        console.log(me);
         this.loginService.loggedIn = true;
         this.router.navigate(['/home']);
       });

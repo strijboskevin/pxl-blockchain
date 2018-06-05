@@ -13,7 +13,6 @@ export class LogsService {
   constructor(private http: HttpClient) {}
 
   getBween(start: string, end: string): Observable<any> {
-    console.log(this.BASE_API_URL + '/logs/' + start + '/' + end);
     return this.http.get(this.BASE_API_URL + '/logs/' + start + '/' + end).catch(this.onError);
   }
 

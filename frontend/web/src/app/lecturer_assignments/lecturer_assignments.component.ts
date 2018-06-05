@@ -59,7 +59,7 @@ export class LecturerAssignmentsComponent implements OnInit {
 
     if (this.domain !== 'Seminaries') {
       assignment = new Assignment(this.name, this.description, localStorage.getItem('username'), this.domain, '', '', this.time, 0, this.participants, new Date().getTime().toString(), '', new Date(this.deadline).getTime().toString(), this.handicap, '');
-    } else {
+    } else { // Set handicap to 100
       assignment = new Assignment(this.name, this.description, localStorage.getItem('username'), this.domain, '', '', this.time, 0, this.participants, new Date().getTime().toString(), '', new Date(this.deadline).getTime().toString(), '100', '');
     }
 

@@ -13,10 +13,13 @@ var assignmentsByAssignee = {};
 
 var domains = ["Innovatie", "Student engagement", "Seminaries", "Internationalisering"];
 
-var balancesCb;
-var doneCb
+var balancesCb; // cb to call when the balance is loaded
+var doneCb; // cb to call when all the assignments are loaded
 
 module.exports = {
+    /*
+    Checks if an access token is valid
+    */
     examine: function (request, cb) {
         var options = {
             host: 'graph.microsoft.com',
@@ -38,6 +41,9 @@ module.exports = {
           });
     },
 
+    /*
+    Calls the load module to load all assignments
+    */
     load: function (cb) {
         doneCb = cb;
         genesis.set();
@@ -48,6 +54,9 @@ module.exports = {
         });
     },
 
+    /*
+    Searches a needle in the assignments
+    */
     search: function (needle) {
         var found = [];
 
@@ -384,6 +393,7 @@ module.exports = {
         if (domains.includes(assignment._domain) && getIndex(assignments, assignment._name) == -1) {
             var nAssignment = {};
 
+            // Create a SHA256 hash from the name, the description, the lecturer, the time and the deadline
             var newHash = hash.sha256().update(assignment._name + "_" + assignment._description + "_" + assignment._lecturer + "_" + assignment._time + "_" + assignment._deadline).digest("hex");
 
             genesis.getContract().setName(assignment._name, pushCb);
@@ -424,16 +434,16 @@ module.exports = {
 
     addRequest: function (assignment, user) {
         var index = getIndex(assignments, assignment);
-        if (index > -1) {
-            if (assignments[index].status == 0) {
+        if (index > -1) { // If the assignment exists
+            if (assignments[index].status == 0) { // If the assignment hasn't started yet
                 var req = assignments[index].request;
                 var assignees = assignments[index].assignee;
-                if (req === '' && assignees.indexOf(user) == -1) {
+                if (req === '' && assignees.indexOf(user) == -1) { // If the user wasn't found in the requests nor in the assignees and the requests are empty
                     req = '' + user;
                     genesis.getContract().changeRequest(index, req, changeRequestCb);
                     assignments[index].request = req;
                     set();
-                } else if (req.indexOf(user) == -1 && assignees.indexOf(user) == -1) {
+                } else if (req.indexOf(user) == -1 && assignees.indexOf(user) == -1) { // If the user wasn't found in the requests nor in the assignees and the requests aren't empty
                     req = req + ', ' + user;
                     genesis.getContract().changeRequest(index, req, changeRequestCb);
                     assignments[index].request = req;
@@ -454,12 +464,14 @@ module.exports = {
 
     changeAssignee: function (name, assignee) {
         var index = getIndex(assignments, name);
+        // If the user is in the requests, isn't in the assignees and the assignees are empty
         if (assignments[index].request.indexOf(assignee) > -1 && assignments[index].assignee.indexOf(assignee) == -1 && assignments[index].assignee != '') {
             genesis.getContract().changeAssignee(index, assignments[index].assignee + ', ' + assignee, changeAssigneeCb);
             assignments[index].assignee += ', ' + assignee;
             this.deleteRequest(name, assignee);
-            checkIfClosed();
+            checkIfClosed(); // Check if the maximum amount of participants was reached
             set();
+        // If the assignees are empty and the user is in the requests
         } else if (assignments[index].assignee == '' && assignments[index].request.indexOf(assignee) > -1) {
             genesis.getContract().changeAssignee(index, assignee, changeAssigneeCb);
             assignments[index].assignee = assignee;
@@ -471,13 +483,14 @@ module.exports = {
         }
     },
 
+    // Resets an assignment to it's original state.
     reset: function (name) {
         var index = getIndex(assignments, name);
 
         if (index != -1) {
-            genesis.getContract().changeRequest(index, '');
-            genesis.getContract().changeAssignee(index, '');
-            genesis.getContract().changeStatus(index, 0);
+            genesis.getContract().changeRequest(index, ''); // Empty the requests
+            genesis.getContract().changeAssignee(index, ''); // Empty the assignees
+            genesis.getContract().changeStatus(index, 0); // Change the status to not started
             assignments[index].request = '';
             assignments[index].assignee = '';
             assignments[index].status = 0;
@@ -489,16 +502,16 @@ module.exports = {
     },
 
     changeStatus: function (name, status) {
-        if (status >= 0 && status <= 2) {
+        if (status >= 0 && status <= 2) { // If the status is correct
             var index = getIndex(assignments, name);
             genesis.getContract().changeStatus(index, status, changeStatusCb);
             assignments[index].status = status;
 
-            if (status == 1) {
+            if (status == 1) { // Empty the requests if the request was started
                 assignments[index].request = "";
                 genesis.getContract().changeRequest(index, "", changeRequestCb);
             }
-            if (status == 2) {
+            if (status == 2) { // Give the hours to the users if status was changed to done
                 addHours(assignments[index].assignee, assignments[index].deadline, assignments[index].handicap, assignments[index].time);
                 assignments[index].request = "";
                 assignments[index].performed = Date.now().toString();
@@ -590,8 +603,10 @@ module.exports = {
 
 function setAssignmentsByLecturer() {
     assignments.forEach(function (value) {
+        // If the array doesn't exist yet, create it and push the assignment
         if (assignmentsByLecturer[value.lecturer] == undefined) {
             assignmentsByLecturer[value.lecturer] = new Array(value);
+        // If the array exists, retrieve it and push the assignment
         } else {
             var arr = assignmentsByLecturer[value.lecturer];
             arr.push(value);
@@ -736,6 +751,7 @@ function setBalanceCb(error) {
     }
 }
 
+// Checks if an assignment should be closed (for example when the maximum amount of participants was reached)
 function checkIfClosed(index) {
     var assignment = assignments[index];
     var split = assignment.assignee.split(', ');
@@ -754,6 +770,7 @@ function checkIfClosed(index) {
     }
 }
 
+// Adds the hours to the assigned assignees according to the deadline and handicap
 function addHours(assignees, deadline, handicap, hours) {
     var split = assignees.split(',');
     var x = 0;

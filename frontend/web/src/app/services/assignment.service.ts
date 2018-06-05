@@ -20,7 +20,6 @@ export class AssignmentService implements OnInit {
 
   deleteAssignment(name: string, assignee: string): Observable<any> {
     return this.http.delete(this.BASE_API_URL + '/assignments/' + name + '/' + assignee).catch(this.onError);
-
   }
 
   getAssignments(): Observable<any> {
@@ -75,7 +74,7 @@ export class AssignmentService implements OnInit {
     return this.http.post(this.BASE_API_URL + '/requests', {assignment: assignment, user: user}).catch(this.onError);
   }
 
-  deleteRequest(assignment: string, user: string): Observable<any> {
+  deleteRequest(assignment: Assignment, user: string): Observable<any> {
     return this.http.delete(this.BASE_API_URL + '/request/' + assignment + '/' + user).catch(this.onError);
   }
 

@@ -31,14 +31,14 @@ export class AssignmentComponent implements OnInit {
     this.nav.show();
     this.nav.element = 'assignment';
     const name = this.route.snapshot.params['name'];
-    if (localStorage.getItem('username') !== null) {
-      if (this.login.loggedIn) {
+    if (localStorage.getItem('username') !== null) { // If the user is logged in
+      if (this.login.loggedIn) { // If the api calls are done
         this.load();
       } else {
-        this.router.navigate(['loading', 'assignment/' + name]);
+        this.router.navigate(['loading', 'assignment/' + name]); // Else wait 5 seconds
       }
     } else {
-      this.router.navigate(['']);
+      this.router.navigate(['']); // Redirect to login page
     }
   }
 
@@ -58,7 +58,7 @@ export class AssignmentComponent implements OnInit {
       },
       () => {
         const username = localStorage.getItem('username');
-        console.log(this.assignment);
+        // Some tests to check if the user can request the assignment
         if (this.assignment.request.indexOf(username) === -1 && this.assignment.assignee.indexOf(username) === -1 && this.assignment.status == 0) {
           this.canRequest = true;
         } else {

@@ -28,7 +28,7 @@ export class MessagesComponent implements OnInit {
   ngOnInit() {
     this.jobtitle = localStorage.getItem('jobtitle');
 
-    if (!this.jobtitle.includes('Student')) {
+    if (!this.jobtitle.includes('Personeel')) {
       this.username = this.route.snapshot.params['name'];
     } else {
       this.username = localStorage.getItem('username');
@@ -40,7 +40,7 @@ export class MessagesComponent implements OnInit {
       if (this.login.loggedIn) {
         this.load();
       } else {
-        if (!this.jobtitle.includes('Student')) {
+        if (!this.jobtitle.includes('Personeel')) {
           this.router.navigate(['loading', 'messages/' + this.username]);
         } else {
           this.router.navigate(['loading', 'messages']);

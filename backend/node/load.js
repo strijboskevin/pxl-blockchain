@@ -34,6 +34,9 @@ var messagesCb;
 
 module.exports = {
 
+    /*
+    Makes the connection to the blockchain via the 1337 port
+    */
     set: function () {
         try {
             var chainUrl = 'http://' + ips[Math.floor(Math.random() * ips.length)];
@@ -45,20 +48,32 @@ module.exports = {
         }
     },
 
+    /*
+    Initializes the loading of the data on the blockchain
+    */
     init: function (toCall) {
         assignmentsCb = toCall;
         contract.getNamesLength(getLengthCb);
     },
-
+    
+    /*
+    Returns the contract received by accessing the abi from Monax
+    */
     getContract: function () {
         return contract;
     },
 
+    /*
+    Returns all assignments which were loaded
+    */
     getAssignments: function () {
         return assignments;
     }
 }
 
+/*
+Collects all the assignment names from the blockchain
+*/
 function getNames() {
     var index;
 
@@ -67,6 +82,9 @@ function getNames() {
     }
 }
 
+/*
+Collects all the assignment descriptions from the blockchain
+*/
 function getDescriptions() {
     var index;
 
@@ -75,6 +93,9 @@ function getDescriptions() {
     }
 }
 
+/*
+Collects all the assignment lecturer from the blockchain
+*/
 function getLecturers() {
     var index;
 
@@ -83,6 +104,9 @@ function getLecturers() {
     }
 }
 
+/*
+Collects all the assignment assignees from the blockchain
+*/
 function getAssignees() {
     var index;
 
@@ -91,6 +115,9 @@ function getAssignees() {
     }
 }
 
+/*
+Collects all the assignment domains from the blockchain
+*/
 function getDomains() {
     var index;
 
@@ -99,6 +126,9 @@ function getDomains() {
     }
 }
 
+/*
+Collects all the statuses names from the blockchain
+*/
 function getStatuses() {
     var index;
 
@@ -107,6 +137,9 @@ function getStatuses() {
     }
 }
 
+/*
+Collects all the assignment hashes from the blockchain
+*/
 function getHashes() {
     var index;
 
@@ -115,6 +148,9 @@ function getHashes() {
     }
 }
 
+/*
+Collects all the assignment times from the blockchain
+*/
 function getTimes() {
     var index;
 
@@ -127,6 +163,9 @@ function getTimes() {
     }
 }
 
+/*
+Collects all the assignment created from the blockchain
+*/
 function getCreated() {
     var index;
 
@@ -135,6 +174,9 @@ function getCreated() {
     }
 }
 
+/*
+Collects all the assignment performed from the blockchain
+*/
 function getPerformed() {
     var index;
 
@@ -143,6 +185,9 @@ function getPerformed() {
     }
 }
 
+/*
+Collects all the assignment deadlines from the blockchain
+*/
 function getDeadlines() {
     var index;
 
@@ -151,6 +196,9 @@ function getDeadlines() {
     }
 }
 
+/*
+Collects all the assignment handicaps from the blockchain
+*/
 function getHandicaps() {
     var index;
 
@@ -159,6 +207,9 @@ function getHandicaps() {
     }
 }
 
+/*
+Collects all the assignment maxima from the blockchain
+*/
 function getMaxima() {
     var index;
 
@@ -167,6 +218,9 @@ function getMaxima() {
     }
 }
 
+/*
+Collects all the assignment requests from the blockchain
+*/
 function getRequests() {
     var index;
 
@@ -288,11 +342,16 @@ function getRequestCb(error, request) {
     }
 }
 
+/*
+This is the last callback that will be called. So, after this callback, it's possible
+to collect all the assignments and put them in an array.
+*/
 function getTimeCb(error, time) {
     if (!error) {
         times.push(time.toString(10));
         length = length - 1;
 
+        // If all components are loaded
         if (length == 0) {
             var x;
 
