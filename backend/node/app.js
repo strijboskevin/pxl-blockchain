@@ -1,14 +1,11 @@
 var logic = require('./logic.js');
 var messages_logic = require('./messages_logic.js');
 var logs_logic = require('./logs_logic.js');
-var express = require('express'); // Used to create an api
-var bodyParser = require('body-parser'); // Used to send json responses
-var cors = require('cors'); // Angular sends cors requests
-var mailer = require("nodemailer"); // Used to send mails
-/*
-Load the assignments. After the assignments are loaded, load the messages. After the messages are loaded, load the logs.
-*/
-logic.load(function () {
+var express = require('express'); 
+var bodyParser = require('body-parser'); 
+var cors = require('cors'); 
+var mailer = require("nodemailer"); 
+logic.load(function () { 
   messages_logic.load(function () {
     logs_logic.load();
   });
@@ -20,7 +17,7 @@ app.use(bodyParser());
 app.use(cors());
 
 app.get('/balances/:user', function (request, response) {
-  logic.examine(request, function (mail, jobtitle) { // Check if the access token is valid
+  logic.examine(request, function (mail, jobtitle) { 
     if ((mail === undefined || mail != request.params.user) && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
@@ -381,9 +378,7 @@ app.put('/assignments/:name/assignee/:assignee', function (request, response) {
     if (mail !== request.params.assignee && jobtitle.indexOf('Personeel') === -1) {
       response.sendStatus(401);
     } else {
-      // Add a log
       logs_logic.addLog(new Date().getTime(), `${mail} + heeft gebruiker met naam "${request.params.assignee}" toegekend aan opdracht met als naam "${request.params.name}".`, function () {
-        // Send a mail to the assignee
         var transporter = mailer.createTransport({
           service: "Gmail",
           auth: {
@@ -401,9 +396,9 @@ app.put('/assignments/:name/assignee/:assignee', function (request, response) {
       }
       
       transporter.sendMail(mail, function(error, response){
-          if(error){
+          if (error){
               console.log(error);
-          }else{
+          } else{
               console.log("Message sent: " + response.message);
           }
       

@@ -10,7 +10,6 @@ import {LoginService} from '../services/login.service';
 @Component({
   selector: 'app-lecturer-assignment',
   templateUrl: './lecturer_assignments.component.html',
-  providers: [AssignmentService]
 })
 export class LecturerAssignmentsComponent implements OnInit {
   assignments: Observable<Assignment[]>;
@@ -32,7 +31,7 @@ export class LecturerAssignmentsComponent implements OnInit {
   constructor(private authService: AuthService,
               private assignmentService: AssignmentService,
               private router: Router,
-              public nav: NavbarService,
+              private nav: NavbarService,
               private login: LoginService) {
   }
 

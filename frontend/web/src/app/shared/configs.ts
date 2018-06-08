@@ -5,6 +5,6 @@
 
 export const Configs = {
   appId: 'e6c987d2-8bdc-4f1a-bafc-04ba3d51f340',
-  heroku: 'https://cors-anywhere.herokuapp.com/', // Link to the VPN proxy
+  heroku: 'https://cors-anywhere.herokuapp.com/', // Link to the CORS proxy
   scope: 'User.Read'
 };
